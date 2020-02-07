@@ -5,5 +5,7 @@
         public string ExamplesPath { get; set; }
 
         public string GeneratedFileName { get; set; }
+
+        public string ReadmeFileName { get; set; }
     }
 }

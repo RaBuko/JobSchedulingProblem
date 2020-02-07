@@ -31,8 +31,8 @@ namespace FormsApp
         private void InitializeComponent()
         {
             this.MainGroupBox = new System.Windows.Forms.GroupBox();
-            this.ParametersButton = new System.Windows.Forms.Button();
             this.LoggingLevelButton = new System.Windows.Forms.Button();
+            this.ParametersButton = new System.Windows.Forms.Button();
             this.InstructionsButton = new System.Windows.Forms.Button();
             this.SolveButton = new System.Windows.Forms.Button();
             this.SavaData = new System.Windows.Forms.Button();
@@ -49,8 +49,8 @@ namespace FormsApp
             // 
             // MainGroupBox
             // 
-            this.MainGroupBox.Controls.Add(this.ParametersButton);
             this.MainGroupBox.Controls.Add(this.LoggingLevelButton);
+            this.MainGroupBox.Controls.Add(this.ParametersButton);
             this.MainGroupBox.Controls.Add(this.InstructionsButton);
             this.MainGroupBox.Controls.Add(this.SolveButton);
             this.MainGroupBox.Controls.Add(this.SavaData);
@@ -65,23 +65,23 @@ namespace FormsApp
             this.MainGroupBox.TabStop = false;
             this.MainGroupBox.Text = "Menu";
             // 
-            // ParametersButton
-            // 
-            this.ParametersButton.Location = new System.Drawing.Point(6, 95);
-            this.ParametersButton.Name = "ParametersButton";
-            this.ParametersButton.Size = new System.Drawing.Size(223, 38);
-            this.ParametersButton.TabIndex = 6;
-            this.ParametersButton.Text = "Dostosuj parametry";
-            this.ParametersButton.UseVisualStyleBackColor = true;
-            // 
             // LoggingLevelButton
             // 
             this.LoggingLevelButton.Location = new System.Drawing.Point(119, 156);
             this.LoggingLevelButton.Name = "LoggingLevelButton";
             this.LoggingLevelButton.Size = new System.Drawing.Size(107, 38);
             this.LoggingLevelButton.TabIndex = 6;
-            this.LoggingLevelButton.Text = "Poziom logowania";
+            this.LoggingLevelButton.Text = "Ustawienia";
             this.LoggingLevelButton.UseVisualStyleBackColor = true;
+            // 
+            // ParametersButton
+            // 
+            this.ParametersButton.Location = new System.Drawing.Point(6, 95);
+            this.ParametersButton.Name = "ParametersButton";
+            this.ParametersButton.Size = new System.Drawing.Size(223, 38);
+            this.ParametersButton.TabIndex = 6;
+            this.ParametersButton.Text = "Dostosuj parametry algorytmu";
+            this.ParametersButton.UseVisualStyleBackColor = true;
             // 
             // InstructionsButton
             // 
@@ -106,10 +106,11 @@ namespace FormsApp
             // 
             this.SavaData.Location = new System.Drawing.Point(119, 200);
             this.SavaData.Name = "SavaData";
-            this.SavaData.Size = new System.Drawing.Size(110, 38);
+            this.SavaData.Size = new System.Drawing.Size(107, 38);
             this.SavaData.TabIndex = 6;
             this.SavaData.Text = "Zapisz dane";
             this.SavaData.UseVisualStyleBackColor = true;
+            this.SavaData.Click += new System.EventHandler(this.SavaData_Click);
             // 
             // GenerateDataButton
             // 
@@ -119,6 +120,7 @@ namespace FormsApp
             this.GenerateDataButton.TabIndex = 6;
             this.GenerateDataButton.Text = "Wygeneruj dane";
             this.GenerateDataButton.UseVisualStyleBackColor = true;
+            this.GenerateDataButton.Click += new System.EventHandler(this.GenerateDataButton_Click);
             // 
             // LoadDataGroupBox
             // 

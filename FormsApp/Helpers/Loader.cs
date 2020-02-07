@@ -69,15 +69,18 @@ namespace FormsApp.Helpers
 
         public static AppSettings LoadAppSettings()
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-            if (!File.Exists(path)) throw new Exception($"{path} does not exists");
-            var data = File.ReadAllText(path);
-            var obj = JsonConvert.DeserializeObject<AppSettings>(data);
-            return obj;
+            return JsonConvert.DeserializeObject<AppSettings>(LoadFileFromAppDirectory("appsettings.json"));
         }
 
         public static string GetExampleDataPath(string relativePath, string fileName = null) => Path.Combine(Directory.GetCurrentDirectory(), relativePath, fileName ?? "");
 
         public static string[] FindExampleData(string relativePath) => Directory.GetFiles(GetExampleDataPath(relativePath));
+    
+        internal static string LoadFileFromAppDirectory(string fileName)
+        {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
+            if (!File.Exists(path)) throw new Exception($"{path} does not exists");
+            return File.ReadAllText(path);
+        }
     }
 }
