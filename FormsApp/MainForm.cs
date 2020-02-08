@@ -40,7 +40,8 @@ namespace FormsApp
 
         private void GenerateDataButton_Click(object sender, EventArgs e)
         {
-            data = 
+            GenerateDataForm generateDataForm = new GenerateDataForm();
+            generateDataForm.Show();
         }
     }
 }
