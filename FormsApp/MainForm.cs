@@ -1,9 +1,11 @@
 ﻿using FormsApp.Dialogs;
 using FormsApp.Helpers;
 using Solver.Data;
+using Solver.Methods;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -11,18 +13,30 @@ namespace FormsApp
 {
     public partial class MainForm : Form
     {
-        public List<Job> data;
-        public Action<string> Logging;
+        private List<Job> data;
+        private readonly Action<string> logging;
+        private List<string> foundFiles = new List<string>();
+        private string lastSearchedDirectory;
+        private readonly Type[] algorithms = { 
+            typeof(DynamicProgrammingMethod), 
+            typeof(BruteForceMethod) 
+        };
 
         public MainForm()
         {
             InitializeComponent();
-            Logging = Log;
+            logging = Log;
+            LoadFoundDataFiles(Program.AppSettings.ExamplesPath);
+        }
+
+        private void ParametersButton_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void AlgorithmChangeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            Type algorithmType = algorithms[AlgorithmChangeComboBox.SelectedIndex];
         }
 
         private void InstructionsButton_Click(object sender, EventArgs e)
@@ -38,29 +52,30 @@ namespace FormsApp
 
         private void SaveData_Click(object sender, EventArgs e)
         {
-            if (data == null || data.Count == 0) { Logging?.Invoke("Dane niezaładowane, nie można zapisać"); }
+            if (data == null || data.Count == 0) { logging?.Invoke("Dane niezaładowane, nie można zapisać"); }
             else
             {
-                Logging?.Invoke("Zapis danych...");
+                logging?.Invoke("Zapis danych...");
                 var module = new FileSavingDialog();
                 module.SaveData(data);
-                Logging?.Invoke("Koniec");
+                if (lastSearchedDirectory != null) LoadFoundDataFiles(lastSearchedDirectory);
+                logging?.Invoke("Koniec");
             }
         }
 
         private void ShowDataButton_Click(object sender, EventArgs e)
         {
-            if (data == null || data.Count == 0) { Logging?.Invoke("Dane niezaładowane, nie można pokazać"); }
+            if (data == null || data.Count == 0) { logging?.Invoke("Dane niezaładowane, nie można pokazać"); }
             else
             {
-                Logging?.Invoke($"Ilość zadań: {data.Count}");
-                Logging?.Invoke(string.Join('\n', data.Select(x => x.ToString())));
+                logging?.Invoke($"Ilość zadań: {data.Count}");
+                logging?.Invoke(string.Join('\n', data.Select(x => x.ToString())));
             }
         }
 
         private void GenerateDataButton_Click(object sender, EventArgs e)
         {
-            Logging?.Invoke("Generowanie danych...");
+            logging?.Invoke("Generowanie danych...");
             GenerateDataForm generateDataForm = new GenerateDataForm(Log);
             generateDataForm.Show();
             generateDataForm.VisibleChanged += GenerateDataFormVisibleChanged;
@@ -71,12 +86,12 @@ namespace FormsApp
             GenerateDataForm frm = (GenerateDataForm)sender;
             if (!frm.Visible)
             {
-                if (frm.GeneratorOptions == null) Logging?.Invoke("Przerwano generowanie danych");
+                if (frm.GeneratorOptions == null) logging?.Invoke("Przerwano generowanie danych");
                 else
                 {
                     data = Generator.GenerateJobs(frm.GeneratorOptions);
                     ChangeDataLabels();
-                    Logging?.Invoke("Wygenerowano dane");
+                    logging?.Invoke("Wygenerowano dane");
                 }
                 frm.Dispose();
             }
@@ -84,7 +99,20 @@ namespace FormsApp
 
         private void SearchFolderButton_Click(object sender, EventArgs e)
         {
+            using var fbd = new FolderBrowserDialog();
+            DialogResult result = fbd.ShowDialog();
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            {
+                LoadFoundDataFiles(fbd.SelectedPath);  
+            }
+        }
 
+        private void LoadFoundDataFiles(string directoryPath)
+        {
+            lastSearchedDirectory = directoryPath;
+            FoundDataFilesListBox.Items.Clear();
+            foundFiles = Loader.SearchDirectoryForJobsFiles(directoryPath, logging);
+            FoundDataFilesListBox.Items.AddRange(foundFiles.Select(x => Path.GetFileName(x)).ToArray());
         }
 
         private void ChangeDataLabels(string fileName = null)
@@ -101,7 +129,7 @@ namespace FormsApp
                 CountJobsLabel.Text = data.Count.ToString();
                 if (fileName != null)
                 {
-                    BestLabel.Text = Loader.FindBest(fileName).ToString();
+                    BestLabel.Text = Loader.FindBest(fileName);
                     FileNameLabel.Text = fileName;
                 }
                 else
@@ -114,9 +142,14 @@ namespace FormsApp
 
         private void FoundDataFilesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            var chosenFile = foundFiles[FoundDataFilesListBox.SelectedIndex];
+            logging?.Invoke($"Wczytywanie pliku {chosenFile}");
+            data = Loader.LoadJobsFromFile(chosenFile);
+            ChangeDataLabels(Path.GetFileName(chosenFile));
+            logging?.Invoke("Plik wczytany");
         }
 
         private void ClearLogButton_Click(object sender, EventArgs e) => LogRichTextBox.Clear();
+
     }
 }

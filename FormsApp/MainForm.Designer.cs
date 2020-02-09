@@ -31,6 +31,14 @@ namespace FormsApp
         private void InitializeComponent()
         {
             this.MainGroupBox = new System.Windows.Forms.GroupBox();
+            this.FileNameLabel = new System.Windows.Forms.Label();
+            this.FileNameInfoLabel = new System.Windows.Forms.Label();
+            this.BestLabel = new System.Windows.Forms.Label();
+            this.BestInfoLabel = new System.Windows.Forms.Label();
+            this.CountJobsLabel = new System.Windows.Forms.Label();
+            this.CountJobsInfoLabel = new System.Windows.Forms.Label();
+            this.DataLoadedLabel = new System.Windows.Forms.Label();
+            this.DataLoadedInfoLabel = new System.Windows.Forms.Label();
             this.ClearLogButton = new System.Windows.Forms.Button();
             this.InstructionsButton = new System.Windows.Forms.Button();
             this.ParametersButton = new System.Windows.Forms.Button();
@@ -44,14 +52,6 @@ namespace FormsApp
             this.AlgorithmLabel = new System.Windows.Forms.Label();
             this.AlgorithmChangeComboBox = new System.Windows.Forms.ComboBox();
             this.LogRichTextBox = new System.Windows.Forms.RichTextBox();
-            this.DataLoadedInfoLabel = new System.Windows.Forms.Label();
-            this.DataLoadedLabel = new System.Windows.Forms.Label();
-            this.CountJobsInfoLabel = new System.Windows.Forms.Label();
-            this.CountJobsLabel = new System.Windows.Forms.Label();
-            this.BestInfoLabel = new System.Windows.Forms.Label();
-            this.BestLabel = new System.Windows.Forms.Label();
-            this.FileNameInfoLabel = new System.Windows.Forms.Label();
-            this.FileNameLabel = new System.Windows.Forms.Label();
             this.MainGroupBox.SuspendLayout();
             this.LoadDataGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -79,6 +79,79 @@ namespace FormsApp
             this.MainGroupBox.TabIndex = 2;
             this.MainGroupBox.TabStop = false;
             this.MainGroupBox.Text = "Menu";
+            // 
+            // FileNameLabel
+            // 
+            this.FileNameLabel.AutoSize = true;
+            this.FileNameLabel.Location = new System.Drawing.Point(72, 181);
+            this.FileNameLabel.Name = "FileNameLabel";
+            this.FileNameLabel.Size = new System.Drawing.Size(12, 15);
+            this.FileNameLabel.TabIndex = 13;
+            this.FileNameLabel.Text = "-";
+            // 
+            // FileNameInfoLabel
+            // 
+            this.FileNameInfoLabel.AutoSize = true;
+            this.FileNameInfoLabel.Location = new System.Drawing.Point(6, 181);
+            this.FileNameInfoLabel.Name = "FileNameInfoLabel";
+            this.FileNameInfoLabel.Size = new System.Drawing.Size(29, 15);
+            this.FileNameInfoLabel.TabIndex = 13;
+            this.FileNameInfoLabel.Text = "Plik:";
+            // 
+            // BestLabel
+            // 
+            this.BestLabel.AutoSize = true;
+            this.BestLabel.Location = new System.Drawing.Point(72, 166);
+            this.BestLabel.Name = "BestLabel";
+            this.BestLabel.Size = new System.Drawing.Size(12, 15);
+            this.BestLabel.TabIndex = 12;
+            this.BestLabel.Text = "-";
+            // 
+            // BestInfoLabel
+            // 
+            this.BestInfoLabel.AutoSize = true;
+            this.BestInfoLabel.Location = new System.Drawing.Point(6, 166);
+            this.BestInfoLabel.Name = "BestInfoLabel";
+            this.BestInfoLabel.Size = new System.Drawing.Size(60, 15);
+            this.BestInfoLabel.TabIndex = 11;
+            this.BestInfoLabel.Text = "Najlepszy:";
+            // 
+            // CountJobsLabel
+            // 
+            this.CountJobsLabel.AutoSize = true;
+            this.CountJobsLabel.Location = new System.Drawing.Point(72, 151);
+            this.CountJobsLabel.Name = "CountJobsLabel";
+            this.CountJobsLabel.Size = new System.Drawing.Size(13, 15);
+            this.CountJobsLabel.TabIndex = 10;
+            this.CountJobsLabel.Text = "0";
+            // 
+            // CountJobsInfoLabel
+            // 
+            this.CountJobsInfoLabel.AutoSize = true;
+            this.CountJobsInfoLabel.Location = new System.Drawing.Point(6, 151);
+            this.CountJobsInfoLabel.Name = "CountJobsInfoLabel";
+            this.CountJobsInfoLabel.Size = new System.Drawing.Size(68, 15);
+            this.CountJobsInfoLabel.TabIndex = 9;
+            this.CountJobsInfoLabel.Text = "Ilość zadań:";
+            // 
+            // DataLoadedLabel
+            // 
+            this.DataLoadedLabel.AutoSize = true;
+            this.DataLoadedLabel.ForeColor = System.Drawing.Color.Red;
+            this.DataLoadedLabel.Location = new System.Drawing.Point(72, 136);
+            this.DataLoadedLabel.Name = "DataLoadedLabel";
+            this.DataLoadedLabel.Size = new System.Drawing.Size(87, 15);
+            this.DataLoadedLabel.TabIndex = 8;
+            this.DataLoadedLabel.Text = "Niezaładowane";
+            // 
+            // DataLoadedInfoLabel
+            // 
+            this.DataLoadedInfoLabel.AutoSize = true;
+            this.DataLoadedInfoLabel.Location = new System.Drawing.Point(6, 136);
+            this.DataLoadedInfoLabel.Name = "DataLoadedInfoLabel";
+            this.DataLoadedInfoLabel.Size = new System.Drawing.Size(37, 15);
+            this.DataLoadedInfoLabel.TabIndex = 7;
+            this.DataLoadedInfoLabel.Text = "Dane:";
             // 
             // ClearLogButton
             // 
@@ -108,6 +181,7 @@ namespace FormsApp
             this.ParametersButton.TabIndex = 6;
             this.ParametersButton.Text = "Dostosuj parametry algorytmu";
             this.ParametersButton.UseVisualStyleBackColor = true;
+            this.ParametersButton.Click += new System.EventHandler(this.ParametersButton_Click);
             // 
             // SolveButton
             // 
@@ -155,7 +229,7 @@ namespace FormsApp
             // SaveData
             // 
             this.SaveData.Location = new System.Drawing.Point(115, 55);
-            this.SaveData.Name = "SavaData";
+            this.SaveData.Name = "SaveData";
             this.SaveData.Size = new System.Drawing.Size(102, 27);
             this.SaveData.TabIndex = 6;
             this.SaveData.Text = "Zapisz";
@@ -208,79 +282,6 @@ namespace FormsApp
             this.LogRichTextBox.Size = new System.Drawing.Size(535, 426);
             this.LogRichTextBox.TabIndex = 3;
             this.LogRichTextBox.Text = "";
-            // 
-            // DataLoadedInfoLabel
-            // 
-            this.DataLoadedInfoLabel.AutoSize = true;
-            this.DataLoadedInfoLabel.Location = new System.Drawing.Point(6, 136);
-            this.DataLoadedInfoLabel.Name = "DataLoadedInfoLabel";
-            this.DataLoadedInfoLabel.Size = new System.Drawing.Size(37, 15);
-            this.DataLoadedInfoLabel.TabIndex = 7;
-            this.DataLoadedInfoLabel.Text = "Dane:";
-            // 
-            // DataLoadedLabel
-            // 
-            this.DataLoadedLabel.AutoSize = true;
-            this.DataLoadedLabel.ForeColor = System.Drawing.Color.Red;
-            this.DataLoadedLabel.Location = new System.Drawing.Point(72, 136);
-            this.DataLoadedLabel.Name = "DataLoadedLabel";
-            this.DataLoadedLabel.Size = new System.Drawing.Size(87, 15);
-            this.DataLoadedLabel.TabIndex = 8;
-            this.DataLoadedLabel.Text = "Niezaładowane";
-            // 
-            // CountJobsInfoLabel
-            // 
-            this.CountJobsInfoLabel.AutoSize = true;
-            this.CountJobsInfoLabel.Location = new System.Drawing.Point(6, 151);
-            this.CountJobsInfoLabel.Name = "CountJobsInfoLabel";
-            this.CountJobsInfoLabel.Size = new System.Drawing.Size(68, 15);
-            this.CountJobsInfoLabel.TabIndex = 9;
-            this.CountJobsInfoLabel.Text = "Ilość zadań:";
-            // 
-            // CountJobsLabel
-            // 
-            this.CountJobsLabel.AutoSize = true;
-            this.CountJobsLabel.Location = new System.Drawing.Point(72, 151);
-            this.CountJobsLabel.Name = "CountJobsLabel";
-            this.CountJobsLabel.Size = new System.Drawing.Size(13, 15);
-            this.CountJobsLabel.TabIndex = 10;
-            this.CountJobsLabel.Text = "0";
-            // 
-            // BestInfoLabel
-            // 
-            this.BestInfoLabel.AutoSize = true;
-            this.BestInfoLabel.Location = new System.Drawing.Point(6, 166);
-            this.BestInfoLabel.Name = "BestInfoLabel";
-            this.BestInfoLabel.Size = new System.Drawing.Size(60, 15);
-            this.BestInfoLabel.TabIndex = 11;
-            this.BestInfoLabel.Text = "Najlepszy:";
-            // 
-            // BestLabel
-            // 
-            this.BestLabel.AutoSize = true;
-            this.BestLabel.Location = new System.Drawing.Point(72, 166);
-            this.BestLabel.Name = "BestLabel";
-            this.BestLabel.Size = new System.Drawing.Size(12, 15);
-            this.BestLabel.TabIndex = 12;
-            this.BestLabel.Text = "-";
-            // 
-            // FileNameInfoLabel
-            // 
-            this.FileNameInfoLabel.AutoSize = true;
-            this.FileNameInfoLabel.Location = new System.Drawing.Point(6, 181);
-            this.FileNameInfoLabel.Name = "FileNameInfoLabel";
-            this.FileNameInfoLabel.Size = new System.Drawing.Size(29, 15);
-            this.FileNameInfoLabel.TabIndex = 13;
-            this.FileNameInfoLabel.Text = "Plik:";
-            // 
-            // FileNameLabel
-            // 
-            this.FileNameLabel.AutoSize = true;
-            this.FileNameLabel.Location = new System.Drawing.Point(72, 181);
-            this.FileNameLabel.Name = "FileNameLabel";
-            this.FileNameLabel.Size = new System.Drawing.Size(12, 15);
-            this.FileNameLabel.TabIndex = 13;
-            this.FileNameLabel.Text = "-";
             // 
             // MainForm
             // 

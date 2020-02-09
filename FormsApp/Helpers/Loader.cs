@@ -19,7 +19,6 @@ namespace FormsApp.Helpers
         /// <returns>Set of parsed jobs</returns>
         internal static List<Job> LoadJobsFromFile(string path)
         {
-            
             var list = new List<Job>();
             var file = File.ReadAllText(path, Encoding.ASCII).Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
@@ -66,15 +65,18 @@ namespace FormsApp.Helpers
             File.WriteAllText(path, sb.ToString().Trim());
         }
 
-        internal static AppSettings LoadAppSettings()
-        {
-            return JsonConvert.DeserializeObject<AppSettings>(LoadFileFromAppDirectory("appsettings.json"));
-        }
+        #region JSON
+        internal static AppSettings LoadAppSettings() => LoadJson<AppSettings>(LoadFileFromAppDirectory("appsettings.json"));
+
+        private static T LoadJson<T>(string filePath) where T : class => JsonConvert.DeserializeObject<T>(filePath);
+
+        internal static string ParseToJsonString(object obj) => JsonConvert.SerializeObject(obj, Formatting.Indented);
+        #endregion
 
         internal static string GetExampleDataPath(string relativePath, string fileName = null) => Path.Combine(Directory.GetCurrentDirectory(), relativePath, fileName ?? "");
 
         internal static string[] FindExampleData(string relativePath) => Directory.GetFiles(GetExampleDataPath(relativePath));
-    
+
         internal static string LoadFileFromAppDirectory(string fileName)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
@@ -82,14 +84,46 @@ namespace FormsApp.Helpers
             return File.ReadAllText(path);
         }
 
-        internal static string ParseToJsonString(object obj)
+        internal static string FindBest(string fileName)
         {
-            return JsonConvert.SerializeObject(obj, Formatting.Indented);
+            var dict = LoadJson<Dictionary<string, string>>(LoadFileFromAppDirectory(Program.AppSettings.SolvedDictFileName));
+            fileName = Path.GetFileNameWithoutExtension(fileName);
+            try
+            {
+                return dict[fileName];
+            }
+            catch
+            {
+                return "-";
+            }
+            
         }
 
-        internal static object FindBest(string fileName)
+        internal static List<string> SearchDirectoryForJobsFiles(string directoryPath, Action<string> logging)
         {
-            throw new NotImplementedException();
+            List<string> foundFiles = new List<string>();
+            logging?.Invoke($"Przeszukiwany folder: {directoryPath}");
+            foreach (var file in Directory.GetFiles(directoryPath))
+            {
+                try
+                {
+                    Loader.LoadJobsFromFile(file);
+                }
+                catch (InvalidDataException)
+                {
+                    logging?.Invoke($"{Path.GetFileName(file)} nie ma właściwego formatu zadań");
+                    continue;
+                }
+                catch (Exception)
+                {
+                    logging?.Invoke($"Plik {Path.GetFileName(file)} jest niepoprawny");
+                    continue;
+                }
+
+                foundFiles.Add(file);
+            }
+            logging?.Invoke($"Znaleziono plików: {foundFiles.Count()}");
+            return foundFiles;
         }
     }
 }

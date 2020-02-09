@@ -6,13 +6,8 @@ using System.Windows.Forms;
 
 namespace FormsApp.Dialogs
 {
-    public class FileSavingDialog
+    internal class FileSavingDialog
     {
-        public FileSavingDialog()
-        {
-
-        }
-
         internal void SaveData(List<Solver.Data.Job> data)
         {
             Stream myStream;
