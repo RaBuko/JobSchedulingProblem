@@ -10,7 +10,7 @@ namespace Solver.Methods
 
         public Dictionary<string, int> Subsets { get; set; }
 
-        [UserDefined]
+        [UserDefined("Logowanie działania algorytmu")]
         public bool LogEverything { get; set; }
     }
 }

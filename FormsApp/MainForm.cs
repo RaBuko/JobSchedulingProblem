@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Reflection;
+using Solver.Utils;
+using System.Diagnostics;
 
 namespace FormsApp
 {
@@ -19,6 +21,7 @@ namespace FormsApp
         private List<string> foundFiles = new List<string>();
         private string lastSearchedDirectory;
         private readonly List<(Type, Type)> algorithms;
+        private IMethodOptions methodOptions;
 
         public MainForm()
         {
@@ -31,11 +34,46 @@ namespace FormsApp
             AlgorithmChangeComboBox.SelectedIndex = 0;
         }
 
+        private void SolveButton_Click(object sender, EventArgs e)
+        {
+            if (methodOptions == null) logging?.Invoke("Nie podano parametrów do algorytmu");
+            else
+            {
+                var algoritmOptionRelation = algorithms[AlgorithmChangeComboBox.SelectedIndex];
+                var algorithmType = algoritmOptionRelation.Item1;
+                var option = algoritmOptionRelation.Item2;
+
+                var algorithm = Activator.CreateInstance(algorithmType) as IMethod;
+                methodOptions.Data = data;
+                Stopwatch stopwatch = new Stopwatch();
+                methodOptions = algorithm.Prepare(methodOptions);
+                var results = algorithm.Solve(methodOptions, stopwatch, methodOptions.LogEverything ? logging : null);
+                logging.Invoke($"Rezultat: {string.Join(",", results.Item1)}");
+                logging.Invoke($"Best: {results.Item2}");
+            }
+        }
+
         private void ParametersButton_Click(object sender, EventArgs e)
         {
             var methodOptionRelation = algorithms[AlgorithmChangeComboBox.SelectedIndex];
-            logging.Invoke(methodOptionRelation.Item1.Name);
-            logging.Invoke(methodOptionRelation.Item2.Name);
+            ParametersForm parametersForm = new ParametersForm(methodOptionRelation.Item2, logging);
+            parametersForm.Show();
+            parametersForm.VisibleChanged += ParametersFormVisibleChanged;
+        }
+
+        private void ParametersFormVisibleChanged(object sender, EventArgs e)
+        {
+            ParametersForm frm = (ParametersForm)sender;
+            if (!frm.Visible)
+            {
+                if (frm.MethodOptions == null) logging?.Invoke("Przerwano podawanie parametrów");
+                else
+                {
+                    methodOptions = frm.MethodOptions;
+                    logging?.Invoke("Podano parametry");
+                }
+                frm.Dispose();
+            }
         }
 
         private void InstructionsButton_Click(object sender, EventArgs e)

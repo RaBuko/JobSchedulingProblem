@@ -8,12 +8,10 @@ namespace Solver.Methods
 {
     public class BruteForceMethod : IMethod
     {
-        public IMethodOptions Prepare(List<Job> jobs)
+        public IMethodOptions Prepare(IMethodOptions options)
         {
-            return new BruteForceOptions()
-            {
-                Data = jobs,
-            };
+            var bruteForceOptions = options as BruteForceOptions;
+            return bruteForceOptions;
         }
 
         public (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch, Action<string> logging = null)

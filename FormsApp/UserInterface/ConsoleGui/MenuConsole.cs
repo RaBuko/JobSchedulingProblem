@@ -10,7 +10,7 @@ namespace FormsApp.UserInterface.ConsoleGui
 {
     class MenuConsole : IMenu
     {
-        Type[] Methods = { typeof(BruteForceMethod), typeof(DynamicProgrammingMethod) };
+        readonly Type[] Methods = { typeof(BruteForceMethod), typeof(DynamicProgrammingMethod) };
 
         public MainMenuChoiceEnum MainMenuChoice(bool loaded)
         {
@@ -104,7 +104,7 @@ Rozwiąż problem:
             var chosen = Activator.CreateInstance(Methods[ConsoleHelper.GetInputInt(0, Methods.Length - 1)]) as IMethod;
                         
             Console.WriteLine("Przygotowywanie danych ...");
-            var methodOptions = chosen.Prepare(dataJob);
+            var methodOptions = new BruteForceOptions();// chosen.Prepare();
 
             Console.WriteLine("Rozpoczęcie działania");
             Stopwatch stopwatch = new Stopwatch();

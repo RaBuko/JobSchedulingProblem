@@ -8,23 +8,21 @@ namespace Solver.Methods
 {
     public class DynamicProgrammingMethod : IMethod
     {
-        public IMethodOptions Prepare(List<Job> jobs)
+        public IMethodOptions Prepare(IMethodOptions methodOptions)
         {
             var subsets = new Dictionary<string, int>
             {
-                [0.IntToBin(jobs.Count)] = 0
+                [0.IntToBin(methodOptions.Data.Count)] = 0
             };
 
-            for (int i = 1; i < Math.Pow(2, jobs.Count); i++)
+            for (int i = 1; i < Math.Pow(2, methodOptions.Data.Count); i++)
             {
-                subsets[i.IntToBin(jobs.Count)] = int.MaxValue;
+                subsets[i.IntToBin(methodOptions.Data.Count)] = int.MaxValue;
             }
 
-            return new DynamicProgrammingOptions()
-            {
-                Data = jobs,
-                Subsets = subsets,
-            };
+            var dynamicProgrammingOptions = methodOptions as DynamicProgrammingOptions;
+            dynamicProgrammingOptions.Subsets = subsets;
+            return dynamicProgrammingOptions;
         }
 
         public (List<int>, int) Solve(IMethodOptions options, Stopwatch stopwatch, Action<string> logging = null)

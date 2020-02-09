@@ -6,7 +6,7 @@ namespace Solver.Methods
 {
     public interface IMethod
     {
-        IMethodOptions Prepare(List<Job> jobs);
+        IMethodOptions Prepare(IMethodOptions options);
 
         (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch, Action<string> logging = null);
     }

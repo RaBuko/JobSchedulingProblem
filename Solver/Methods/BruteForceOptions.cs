@@ -8,7 +8,7 @@ namespace Solver.Methods
     {
         public List<Job> Data { get; set; }
 
-        [UserDefined]
+        [UserDefined("Logowanie działania algorytmu")]
         public bool LogEverything { get; set; }
     }
 }

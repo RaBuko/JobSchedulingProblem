@@ -191,6 +191,7 @@ namespace FormsApp
             this.SolveButton.TabIndex = 6;
             this.SolveButton.Text = "Rozwiąż";
             this.SolveButton.UseVisualStyleBackColor = true;
+            this.SolveButton.Click += new System.EventHandler(this.SolveButton_Click);
             // 
             // LoadDataGroupBox
             // 
