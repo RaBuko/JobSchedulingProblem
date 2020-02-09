@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace FormsApp
 {
@@ -282,6 +283,7 @@ namespace FormsApp
             this.LogRichTextBox.Size = new System.Drawing.Size(535, 426);
             this.LogRichTextBox.TabIndex = 3;
             this.LogRichTextBox.Text = "";
+            this.LogRichTextBox.TextChanged += LogRichTextBox_TextChanged;
             // 
             // MainForm
             // 
@@ -297,6 +299,12 @@ namespace FormsApp
             this.LoadDataGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
 
+        }
+
+        private void LogRichTextBox_TextChanged(object sender, EventArgs e)
+        {
+            LogRichTextBox.SelectionStart = LogRichTextBox.Text.Length;
+            LogRichTextBox.ScrollToCaret();
         }
 
         #endregion

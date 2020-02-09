@@ -8,8 +8,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Reflection;
-using Solver.Utils;
 using System.Diagnostics;
 
 namespace FormsApp
@@ -41,10 +39,9 @@ namespace FormsApp
             {
                 var algoritmOptionRelation = algorithms[AlgorithmChangeComboBox.SelectedIndex];
                 var algorithmType = algoritmOptionRelation.Item1;
-                var option = algoritmOptionRelation.Item2;
-
                 var algorithm = Activator.CreateInstance(algorithmType) as IMethod;
                 methodOptions.Data = data;
+
                 Stopwatch stopwatch = new Stopwatch();
                 methodOptions = algorithm.Prepare(methodOptions);
                 var results = algorithm.Solve(methodOptions, stopwatch, methodOptions.LogEverything ? logging : null);
