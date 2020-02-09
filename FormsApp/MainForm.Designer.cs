@@ -32,27 +32,43 @@ namespace FormsApp
         {
             this.MainGroupBox = new System.Windows.Forms.GroupBox();
             this.ClearLogButton = new System.Windows.Forms.Button();
-            this.ParametersButton = new System.Windows.Forms.Button();
             this.InstructionsButton = new System.Windows.Forms.Button();
+            this.ParametersButton = new System.Windows.Forms.Button();
             this.SolveButton = new System.Windows.Forms.Button();
             this.LoadDataGroupBox = new System.Windows.Forms.GroupBox();
             this.FoundDataFilesListBox = new System.Windows.Forms.ListBox();
             this.SearchFolderButton = new System.Windows.Forms.Button();
             this.SavaData = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.ShowDataButton = new System.Windows.Forms.Button();
             this.GenerateDataButton = new System.Windows.Forms.Button();
             this.AlgorithmLabel = new System.Windows.Forms.Label();
             this.AlgorithmChangeComboBox = new System.Windows.Forms.ComboBox();
             this.LogRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.DataLoadedInfoLabel = new System.Windows.Forms.Label();
+            this.DataLoadedLabel = new System.Windows.Forms.Label();
+            this.CountJobsInfoLabel = new System.Windows.Forms.Label();
+            this.CountJobsLabel = new System.Windows.Forms.Label();
+            this.BestInfoLabel = new System.Windows.Forms.Label();
+            this.BestLabel = new System.Windows.Forms.Label();
+            this.FileNameInfoLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.MainGroupBox.SuspendLayout();
             this.LoadDataGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainGroupBox
             // 
+            this.MainGroupBox.Controls.Add(this.label1);
+            this.MainGroupBox.Controls.Add(this.FileNameInfoLabel);
+            this.MainGroupBox.Controls.Add(this.BestLabel);
+            this.MainGroupBox.Controls.Add(this.BestInfoLabel);
+            this.MainGroupBox.Controls.Add(this.CountJobsLabel);
+            this.MainGroupBox.Controls.Add(this.CountJobsInfoLabel);
+            this.MainGroupBox.Controls.Add(this.DataLoadedLabel);
+            this.MainGroupBox.Controls.Add(this.DataLoadedInfoLabel);
             this.MainGroupBox.Controls.Add(this.ClearLogButton);
-            this.MainGroupBox.Controls.Add(this.ParametersButton);
             this.MainGroupBox.Controls.Add(this.InstructionsButton);
+            this.MainGroupBox.Controls.Add(this.ParametersButton);
             this.MainGroupBox.Controls.Add(this.SolveButton);
             this.MainGroupBox.Controls.Add(this.LoadDataGroupBox);
             this.MainGroupBox.Controls.Add(this.AlgorithmLabel);
@@ -66,25 +82,17 @@ namespace FormsApp
             // 
             // ClearLogButton
             // 
-            this.ClearLogButton.Location = new System.Drawing.Point(119, 156);
+            this.ClearLogButton.Location = new System.Drawing.Point(119, 95);
             this.ClearLogButton.Name = "ClearLogButton";
-            this.ClearLogButton.Size = new System.Drawing.Size(107, 38);
+            this.ClearLogButton.Size = new System.Drawing.Size(110, 38);
             this.ClearLogButton.TabIndex = 6;
             this.ClearLogButton.Text = "Wyczyść log";
             this.ClearLogButton.UseVisualStyleBackColor = true;
-            // 
-            // ParametersButton
-            // 
-            this.ParametersButton.Location = new System.Drawing.Point(6, 95);
-            this.ParametersButton.Name = "ParametersButton";
-            this.ParametersButton.Size = new System.Drawing.Size(223, 38);
-            this.ParametersButton.TabIndex = 6;
-            this.ParametersButton.Text = "Dostosuj parametry algorytmu";
-            this.ParametersButton.UseVisualStyleBackColor = true;
+            this.ClearLogButton.Click += new System.EventHandler(this.ClearLogButton_Click);
             // 
             // InstructionsButton
             // 
-            this.InstructionsButton.Location = new System.Drawing.Point(6, 156);
+            this.InstructionsButton.Location = new System.Drawing.Point(6, 95);
             this.InstructionsButton.Name = "InstructionsButton";
             this.InstructionsButton.Size = new System.Drawing.Size(107, 38);
             this.InstructionsButton.TabIndex = 6;
@@ -92,11 +100,20 @@ namespace FormsApp
             this.InstructionsButton.UseVisualStyleBackColor = true;
             this.InstructionsButton.Click += new System.EventHandler(this.InstructionsButton_Click);
             // 
+            // ParametersButton
+            // 
+            this.ParametersButton.Location = new System.Drawing.Point(119, 51);
+            this.ParametersButton.Name = "ParametersButton";
+            this.ParametersButton.Size = new System.Drawing.Size(110, 38);
+            this.ParametersButton.TabIndex = 6;
+            this.ParametersButton.Text = "Dostosuj parametry algorytmu";
+            this.ParametersButton.UseVisualStyleBackColor = true;
+            // 
             // SolveButton
             // 
             this.SolveButton.Location = new System.Drawing.Point(6, 51);
             this.SolveButton.Name = "SolveButton";
-            this.SolveButton.Size = new System.Drawing.Size(223, 38);
+            this.SolveButton.Size = new System.Drawing.Size(107, 38);
             this.SolveButton.TabIndex = 6;
             this.SolveButton.Text = "Rozwiąż";
             this.SolveButton.UseVisualStyleBackColor = true;
@@ -106,7 +123,7 @@ namespace FormsApp
             this.LoadDataGroupBox.Controls.Add(this.FoundDataFilesListBox);
             this.LoadDataGroupBox.Controls.Add(this.SearchFolderButton);
             this.LoadDataGroupBox.Controls.Add(this.SavaData);
-            this.LoadDataGroupBox.Controls.Add(this.button1);
+            this.LoadDataGroupBox.Controls.Add(this.ShowDataButton);
             this.LoadDataGroupBox.Controls.Add(this.GenerateDataButton);
             this.LoadDataGroupBox.Location = new System.Drawing.Point(6, 214);
             this.LoadDataGroupBox.Name = "LoadDataGroupBox";
@@ -145,15 +162,15 @@ namespace FormsApp
             this.SavaData.UseVisualStyleBackColor = true;
             this.SavaData.Click += new System.EventHandler(this.SavaData_Click);
             // 
-            // button1
+            // ShowDataButton
             // 
-            this.button1.Location = new System.Drawing.Point(10, 22);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(99, 27);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Wyświetl dane";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.GenerateDataButton_Click);
+            this.ShowDataButton.Location = new System.Drawing.Point(10, 22);
+            this.ShowDataButton.Name = "ShowDataButton";
+            this.ShowDataButton.Size = new System.Drawing.Size(99, 27);
+            this.ShowDataButton.TabIndex = 6;
+            this.ShowDataButton.Text = "Wyświetl dane";
+            this.ShowDataButton.UseVisualStyleBackColor = true;
+            this.ShowDataButton.Click += new System.EventHandler(this.GenerateDataButton_Click);
             // 
             // GenerateDataButton
             // 
@@ -192,6 +209,79 @@ namespace FormsApp
             this.LogRichTextBox.TabIndex = 3;
             this.LogRichTextBox.Text = "";
             // 
+            // DataLoadedInfoLabel
+            // 
+            this.DataLoadedInfoLabel.AutoSize = true;
+            this.DataLoadedInfoLabel.Location = new System.Drawing.Point(6, 136);
+            this.DataLoadedInfoLabel.Name = "DataLoadedInfoLabel";
+            this.DataLoadedInfoLabel.Size = new System.Drawing.Size(37, 15);
+            this.DataLoadedInfoLabel.TabIndex = 7;
+            this.DataLoadedInfoLabel.Text = "Dane:";
+            // 
+            // DataLoadedLabel
+            // 
+            this.DataLoadedLabel.AutoSize = true;
+            this.DataLoadedLabel.ForeColor = System.Drawing.Color.Red;
+            this.DataLoadedLabel.Location = new System.Drawing.Point(72, 136);
+            this.DataLoadedLabel.Name = "DataLoadedLabel";
+            this.DataLoadedLabel.Size = new System.Drawing.Size(87, 15);
+            this.DataLoadedLabel.TabIndex = 8;
+            this.DataLoadedLabel.Text = "Niezaładowane";
+            // 
+            // CountJobsInfoLabel
+            // 
+            this.CountJobsInfoLabel.AutoSize = true;
+            this.CountJobsInfoLabel.Location = new System.Drawing.Point(6, 151);
+            this.CountJobsInfoLabel.Name = "CountJobsInfoLabel";
+            this.CountJobsInfoLabel.Size = new System.Drawing.Size(68, 15);
+            this.CountJobsInfoLabel.TabIndex = 9;
+            this.CountJobsInfoLabel.Text = "Ilość zadań:";
+            // 
+            // CountJobsLabel
+            // 
+            this.CountJobsLabel.AutoSize = true;
+            this.CountJobsLabel.Location = new System.Drawing.Point(72, 151);
+            this.CountJobsLabel.Name = "CountJobsLabel";
+            this.CountJobsLabel.Size = new System.Drawing.Size(13, 15);
+            this.CountJobsLabel.TabIndex = 10;
+            this.CountJobsLabel.Text = "0";
+            // 
+            // BestInfoLabel
+            // 
+            this.BestInfoLabel.AutoSize = true;
+            this.BestInfoLabel.Location = new System.Drawing.Point(6, 166);
+            this.BestInfoLabel.Name = "BestInfoLabel";
+            this.BestInfoLabel.Size = new System.Drawing.Size(60, 15);
+            this.BestInfoLabel.TabIndex = 11;
+            this.BestInfoLabel.Text = "Najlepszy:";
+            // 
+            // BestLabel
+            // 
+            this.BestLabel.AutoSize = true;
+            this.BestLabel.Location = new System.Drawing.Point(72, 166);
+            this.BestLabel.Name = "BestLabel";
+            this.BestLabel.Size = new System.Drawing.Size(12, 15);
+            this.BestLabel.TabIndex = 12;
+            this.BestLabel.Text = "-";
+            // 
+            // FileNameInfoLabel
+            // 
+            this.FileNameInfoLabel.AutoSize = true;
+            this.FileNameInfoLabel.Location = new System.Drawing.Point(6, 181);
+            this.FileNameInfoLabel.Name = "FileNameInfoLabel";
+            this.FileNameInfoLabel.Size = new System.Drawing.Size(29, 15);
+            this.FileNameInfoLabel.TabIndex = 13;
+            this.FileNameInfoLabel.Text = "Plik:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(103, 206);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(29, 15);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Plik:";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -210,6 +300,7 @@ namespace FormsApp
 
         #endregion
 
+
         private GroupBox MainGroupBox;
         private RichTextBox LogRichTextBox;
         private GroupBox LoadDataGroupBox;
@@ -223,7 +314,15 @@ namespace FormsApp
         private Button SolveButton;
         private Button SavaData;
         private Button GenerateDataButton;
-        private Button button1;
+        private Button ShowDataButton;
+        private Label BestLabel;
+        private Label BestInfoLabel;
+        private Label CountJobsLabel;
+        private Label CountJobsInfoLabel;
+        private Label DataLoadedLabel;
+        private Label DataLoadedInfoLabel;
+        private Label label1;
+        private Label FileNameInfoLabel;
     }
 }
 
