@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Text;
 using System.Linq;
 using Newtonsoft.Json;
 
 namespace FormsApp.Helpers
 {
-    class Loader
+    internal class Loader
     {
         /// <summary>
         /// Loads jobs from specified file. Each file contains the data listed 
@@ -18,7 +17,7 @@ namespace FormsApp.Helpers
         /// </summary>
         /// <param name="path">Path to file</param>
         /// <returns>Set of parsed jobs</returns>
-        public static List<Job> LoadJobsFromFile(string path)
+        internal static List<Job> LoadJobsFromFile(string path)
         {
             
             var list = new List<Job>();
@@ -45,7 +44,7 @@ namespace FormsApp.Helpers
             return list;
         }
 
-        public static void WriteJobsToFile(string path, List<Job> jobs)
+        internal static void WriteJobsToFile(string path, List<Job> jobs)
         {
             var sb = new StringBuilder();
 
@@ -67,20 +66,25 @@ namespace FormsApp.Helpers
             File.WriteAllText(path, sb.ToString().Trim());
         }
 
-        public static AppSettings LoadAppSettings()
+        internal static AppSettings LoadAppSettings()
         {
             return JsonConvert.DeserializeObject<AppSettings>(LoadFileFromAppDirectory("appsettings.json"));
         }
 
-        public static string GetExampleDataPath(string relativePath, string fileName = null) => Path.Combine(Directory.GetCurrentDirectory(), relativePath, fileName ?? "");
+        internal static string GetExampleDataPath(string relativePath, string fileName = null) => Path.Combine(Directory.GetCurrentDirectory(), relativePath, fileName ?? "");
 
-        public static string[] FindExampleData(string relativePath) => Directory.GetFiles(GetExampleDataPath(relativePath));
+        internal static string[] FindExampleData(string relativePath) => Directory.GetFiles(GetExampleDataPath(relativePath));
     
         internal static string LoadFileFromAppDirectory(string fileName)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             if (!File.Exists(path)) throw new Exception($"{path} does not exists");
             return File.ReadAllText(path);
+        }
+
+        internal static string ParseToJsonString(object obj)
+        {
+            return JsonConvert.SerializeObject(obj, Formatting.Indented);
         }
     }
 }

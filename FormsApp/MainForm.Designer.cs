@@ -31,15 +31,16 @@ namespace FormsApp
         private void InitializeComponent()
         {
             this.MainGroupBox = new System.Windows.Forms.GroupBox();
-            this.LoggingLevelButton = new System.Windows.Forms.Button();
+            this.ClearLogButton = new System.Windows.Forms.Button();
             this.ParametersButton = new System.Windows.Forms.Button();
             this.InstructionsButton = new System.Windows.Forms.Button();
             this.SolveButton = new System.Windows.Forms.Button();
-            this.SavaData = new System.Windows.Forms.Button();
-            this.GenerateDataButton = new System.Windows.Forms.Button();
             this.LoadDataGroupBox = new System.Windows.Forms.GroupBox();
             this.FoundDataFilesListBox = new System.Windows.Forms.ListBox();
             this.SearchFolderButton = new System.Windows.Forms.Button();
+            this.SavaData = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.GenerateDataButton = new System.Windows.Forms.Button();
             this.AlgorithmLabel = new System.Windows.Forms.Label();
             this.AlgorithmChangeComboBox = new System.Windows.Forms.ComboBox();
             this.LogRichTextBox = new System.Windows.Forms.RichTextBox();
@@ -49,12 +50,10 @@ namespace FormsApp
             // 
             // MainGroupBox
             // 
-            this.MainGroupBox.Controls.Add(this.LoggingLevelButton);
+            this.MainGroupBox.Controls.Add(this.ClearLogButton);
             this.MainGroupBox.Controls.Add(this.ParametersButton);
             this.MainGroupBox.Controls.Add(this.InstructionsButton);
             this.MainGroupBox.Controls.Add(this.SolveButton);
-            this.MainGroupBox.Controls.Add(this.SavaData);
-            this.MainGroupBox.Controls.Add(this.GenerateDataButton);
             this.MainGroupBox.Controls.Add(this.LoadDataGroupBox);
             this.MainGroupBox.Controls.Add(this.AlgorithmLabel);
             this.MainGroupBox.Controls.Add(this.AlgorithmChangeComboBox);
@@ -65,14 +64,14 @@ namespace FormsApp
             this.MainGroupBox.TabStop = false;
             this.MainGroupBox.Text = "Menu";
             // 
-            // LoggingLevelButton
+            // ClearLogButton
             // 
-            this.LoggingLevelButton.Location = new System.Drawing.Point(119, 156);
-            this.LoggingLevelButton.Name = "LoggingLevelButton";
-            this.LoggingLevelButton.Size = new System.Drawing.Size(107, 38);
-            this.LoggingLevelButton.TabIndex = 6;
-            this.LoggingLevelButton.Text = "Ustawienia";
-            this.LoggingLevelButton.UseVisualStyleBackColor = true;
+            this.ClearLogButton.Location = new System.Drawing.Point(119, 156);
+            this.ClearLogButton.Name = "ClearLogButton";
+            this.ClearLogButton.Size = new System.Drawing.Size(107, 38);
+            this.ClearLogButton.TabIndex = 6;
+            this.ClearLogButton.Text = "Wyczyść log";
+            this.ClearLogButton.UseVisualStyleBackColor = true;
             // 
             // ParametersButton
             // 
@@ -102,54 +101,69 @@ namespace FormsApp
             this.SolveButton.Text = "Rozwiąż";
             this.SolveButton.UseVisualStyleBackColor = true;
             // 
-            // SavaData
-            // 
-            this.SavaData.Location = new System.Drawing.Point(119, 200);
-            this.SavaData.Name = "SavaData";
-            this.SavaData.Size = new System.Drawing.Size(107, 38);
-            this.SavaData.TabIndex = 6;
-            this.SavaData.Text = "Zapisz dane";
-            this.SavaData.UseVisualStyleBackColor = true;
-            this.SavaData.Click += new System.EventHandler(this.SavaData_Click);
-            // 
-            // GenerateDataButton
-            // 
-            this.GenerateDataButton.Location = new System.Drawing.Point(6, 200);
-            this.GenerateDataButton.Name = "GenerateDataButton";
-            this.GenerateDataButton.Size = new System.Drawing.Size(107, 38);
-            this.GenerateDataButton.TabIndex = 6;
-            this.GenerateDataButton.Text = "Wygeneruj dane";
-            this.GenerateDataButton.UseVisualStyleBackColor = true;
-            this.GenerateDataButton.Click += new System.EventHandler(this.GenerateDataButton_Click);
-            // 
             // LoadDataGroupBox
             // 
             this.LoadDataGroupBox.Controls.Add(this.FoundDataFilesListBox);
             this.LoadDataGroupBox.Controls.Add(this.SearchFolderButton);
-            this.LoadDataGroupBox.Location = new System.Drawing.Point(6, 244);
+            this.LoadDataGroupBox.Controls.Add(this.SavaData);
+            this.LoadDataGroupBox.Controls.Add(this.button1);
+            this.LoadDataGroupBox.Controls.Add(this.GenerateDataButton);
+            this.LoadDataGroupBox.Location = new System.Drawing.Point(6, 214);
             this.LoadDataGroupBox.Name = "LoadDataGroupBox";
-            this.LoadDataGroupBox.Size = new System.Drawing.Size(223, 176);
+            this.LoadDataGroupBox.Size = new System.Drawing.Size(223, 206);
             this.LoadDataGroupBox.TabIndex = 2;
             this.LoadDataGroupBox.TabStop = false;
-            this.LoadDataGroupBox.Text = "Wczytywanie danych";
+            this.LoadDataGroupBox.Text = "Dane";
             // 
             // FoundDataFilesListBox
             // 
             this.FoundDataFilesListBox.FormattingEnabled = true;
             this.FoundDataFilesListBox.ItemHeight = 15;
-            this.FoundDataFilesListBox.Location = new System.Drawing.Point(6, 55);
+            this.FoundDataFilesListBox.Location = new System.Drawing.Point(10, 87);
             this.FoundDataFilesListBox.Name = "FoundDataFilesListBox";
-            this.FoundDataFilesListBox.Size = new System.Drawing.Size(209, 109);
+            this.FoundDataFilesListBox.Size = new System.Drawing.Size(207, 109);
             this.FoundDataFilesListBox.TabIndex = 1;
+            this.FoundDataFilesListBox.SelectedIndexChanged += new System.EventHandler(this.FoundDataFilesListBox_SelectedIndexChanged);
             // 
             // SearchFolderButton
             // 
-            this.SearchFolderButton.Location = new System.Drawing.Point(6, 22);
+            this.SearchFolderButton.Location = new System.Drawing.Point(10, 55);
             this.SearchFolderButton.Name = "SearchFolderButton";
-            this.SearchFolderButton.Size = new System.Drawing.Size(209, 27);
+            this.SearchFolderButton.Size = new System.Drawing.Size(99, 27);
             this.SearchFolderButton.TabIndex = 0;
-            this.SearchFolderButton.Text = "Przeszukaj folder";
+            this.SearchFolderButton.Text = "Znajdź";
             this.SearchFolderButton.UseVisualStyleBackColor = true;
+            this.SearchFolderButton.Click += new System.EventHandler(this.SearchFolderButton_Click);
+            // 
+            // SavaData
+            // 
+            this.SavaData.Location = new System.Drawing.Point(115, 55);
+            this.SavaData.Name = "SavaData";
+            this.SavaData.Size = new System.Drawing.Size(102, 27);
+            this.SavaData.TabIndex = 6;
+            this.SavaData.Text = "Zapisz";
+            this.SavaData.UseVisualStyleBackColor = true;
+            this.SavaData.Click += new System.EventHandler(this.SavaData_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(10, 22);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(99, 27);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Wyświetl dane";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.GenerateDataButton_Click);
+            // 
+            // GenerateDataButton
+            // 
+            this.GenerateDataButton.Location = new System.Drawing.Point(115, 22);
+            this.GenerateDataButton.Name = "GenerateDataButton";
+            this.GenerateDataButton.Size = new System.Drawing.Size(102, 27);
+            this.GenerateDataButton.TabIndex = 6;
+            this.GenerateDataButton.Text = "Wygeneruj";
+            this.GenerateDataButton.UseVisualStyleBackColor = true;
+            this.GenerateDataButton.Click += new System.EventHandler(this.GenerateDataButton_Click);
             // 
             // AlgorithmLabel
             // 
@@ -204,11 +218,12 @@ namespace FormsApp
         private Label AlgorithmLabel;
         private ComboBox AlgorithmChangeComboBox;
         private Button ParametersButton;
-        private Button LoggingLevelButton;
+        private Button ClearLogButton;
         private Button InstructionsButton;
         private Button SolveButton;
         private Button SavaData;
         private Button GenerateDataButton;
+        private Button button1;
     }
 }
 

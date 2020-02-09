@@ -3,8 +3,6 @@ using Solver.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Solver.Methods
 {
@@ -12,8 +10,11 @@ namespace Solver.Methods
     {
         public IMethodOptions Prepare(List<Job> jobs)
         {
-            var subsets = new Dictionary<string, int>();
-            subsets[0.IntToBin(jobs.Count)] = 0;
+            var subsets = new Dictionary<string, int>
+            {
+                [0.IntToBin(jobs.Count)] = 0
+            };
+
             for (int i = 1; i < Math.Pow(2, jobs.Count); i++)
             {
                 subsets[i.IntToBin(jobs.Count)] = int.MaxValue;
@@ -40,7 +41,7 @@ namespace Solver.Methods
             string tmp = string.Empty;
 
 
-            logging?.Invoke($"Start : {DateTime.Now.ToString("HH:mm:ss.fff")}\n");
+            logging?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n");
             if (!stopwatch.IsRunning) stopwatch.Start();
             for (int i = 1; i < dpaOptions.Subsets.Count; i++)
             {
@@ -76,7 +77,7 @@ namespace Solver.Methods
             }
 
             if (stopwatch.IsRunning) stopwatch.Stop();
-            logging?.Invoke($"Koniec : {DateTime.Now.ToString("HH:mm:ss.fff")}\n");
+            logging?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n");
 
             return (new List<int>(), rozw);
         }

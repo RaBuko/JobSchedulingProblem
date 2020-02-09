@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Solver.Data
+﻿namespace Solver.Data
 {
     public class GeneratorOptions
     {

@@ -29,7 +29,7 @@ namespace FormsApp
 
         private void Log(string toLog)
         {
-            LogRichTextBox.AppendText(toLog + "\n");
+            LogRichTextBox.AppendText($"{DateTime.UtcNow:HH:mm:ss.fff} : {toLog}\n");
         }
 
         private void SavaData_Click(object sender, EventArgs e)
@@ -40,8 +40,29 @@ namespace FormsApp
 
         private void GenerateDataButton_Click(object sender, EventArgs e)
         {
-            GenerateDataForm generateDataForm = new GenerateDataForm();
+            GenerateDataForm generateDataForm = new GenerateDataForm(Log);
             generateDataForm.Show();
+            generateDataForm.VisibleChanged += GenerateDataFormVisibleChanged;
+        }
+
+        private void GenerateDataFormVisibleChanged(object sender, EventArgs e)
+        {
+            GenerateDataForm frm = (GenerateDataForm)sender;
+            if (!frm.Visible)
+            {
+                data = Generator.GenerateJobs(frm.GeneratorOptions);
+                frm.Dispose();
+            }
+        }
+
+        private void SearchFolderButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void FoundDataFilesListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
