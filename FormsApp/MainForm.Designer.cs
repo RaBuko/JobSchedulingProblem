@@ -272,7 +272,6 @@ namespace FormsApp
             this.AlgorithmChangeComboBox.Name = "AlgorithmChangeComboBox";
             this.AlgorithmChangeComboBox.Size = new System.Drawing.Size(157, 23);
             this.AlgorithmChangeComboBox.TabIndex = 4;
-            this.AlgorithmChangeComboBox.SelectedIndexChanged += new System.EventHandler(this.AlgorithmChangeComboBox_SelectedIndexChanged);
             // 
             // LogRichTextBox
             // 

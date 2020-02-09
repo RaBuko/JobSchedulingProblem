@@ -1,7 +1,6 @@
 ﻿using Solver.Data;
-using System;
+using Solver.Utils;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Solver.Methods
 {
@@ -10,5 +9,8 @@ namespace Solver.Methods
         public List<Job> Data { get; set; }
 
         public Dictionary<string, int> Subsets { get; set; }
+
+        [UserDefined]
+        public bool LogEverything { get; set; }
     }
 }

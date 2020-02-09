@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace FormsApp
 {
@@ -17,26 +18,24 @@ namespace FormsApp
         private readonly Action<string> logging;
         private List<string> foundFiles = new List<string>();
         private string lastSearchedDirectory;
-        private readonly Type[] algorithms = { 
-            typeof(DynamicProgrammingMethod), 
-            typeof(BruteForceMethod) 
-        };
+        private readonly List<(Type, Type)> algorithms;
 
         public MainForm()
         {
             InitializeComponent();
             logging = Log;
             LoadFoundDataFiles(Program.AppSettings.ExamplesPath);
+            algorithms = Solver.Utils.Helper.GetMethodAndOptionsTypes();
+            AlgorithmChangeComboBox.Items.AddRange(algorithms
+                .Select(x => x.Item1.Name.Replace("Method", string.Empty)).ToArray());
+            AlgorithmChangeComboBox.SelectedIndex = 0;
         }
 
         private void ParametersButton_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void AlgorithmChangeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Type algorithmType = algorithms[AlgorithmChangeComboBox.SelectedIndex];
+            var methodOptionRelation = algorithms[AlgorithmChangeComboBox.SelectedIndex];
+            logging.Invoke(methodOptionRelation.Item1.Name);
+            logging.Invoke(methodOptionRelation.Item2.Name);
         }
 
         private void InstructionsButton_Click(object sender, EventArgs e)
@@ -103,7 +102,7 @@ namespace FormsApp
             DialogResult result = fbd.ShowDialog();
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
-                LoadFoundDataFiles(fbd.SelectedPath);  
+                LoadFoundDataFiles(fbd.SelectedPath);
             }
         }
 

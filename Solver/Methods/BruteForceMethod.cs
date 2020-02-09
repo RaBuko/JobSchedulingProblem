@@ -26,7 +26,7 @@ namespace Solver.Methods
             int [] temp = data.Select(x => x.Index).ToArray();
             int [] bestOrder = temp;
 
-            logging?.Invoke($"Start : {DateTime.Now.ToString("HH:mm:ss.fff")}\n");
+            logging?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n");
             if (!stopwatch.IsRunning) stopwatch.Start();
 
             while (true)
@@ -69,7 +69,7 @@ namespace Solver.Methods
 
             }
             if (stopwatch.IsRunning) stopwatch.Stop();
-            logging?.Invoke($"Koniec : {DateTime.Now.ToString("HH:mm:ss.fff")}\n");
+            logging?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n");
             return (bestOrder.ToList(), minPenalty);
         }
     }

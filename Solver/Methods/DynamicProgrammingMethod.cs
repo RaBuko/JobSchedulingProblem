@@ -32,7 +32,7 @@ namespace Solver.Methods
             DynamicProgrammingOptions dpaOptions = options as DynamicProgrammingOptions;
             var jobs = dpaOptions.Data;
             var subsets = dpaOptions.Subsets;
-            
+
             int rozw = int.MaxValue;
             int result = 0;
             int index = 0;
@@ -49,7 +49,7 @@ namespace Solver.Methods
                 rozw = int.MaxValue;
                 cmax = 0;
                 logging?.Invoke($"OPT({tmp}):\n");
-                
+
                 for (int j = 0; j < tmp.Length; j++)
                 {
                     if (tmp[j].Equals('1'))
@@ -59,7 +59,7 @@ namespace Solver.Methods
                 }
 
                 logging?.Invoke($"\tCMAX : {cmax}\n");
-                
+
                 for (int j = 0; j < tmp.Length; j++)
                 {
                     if (tmp[j].Equals('1'))
