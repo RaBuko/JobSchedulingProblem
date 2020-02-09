@@ -38,7 +38,7 @@ namespace FormsApp
             this.LoadDataGroupBox = new System.Windows.Forms.GroupBox();
             this.FoundDataFilesListBox = new System.Windows.Forms.ListBox();
             this.SearchFolderButton = new System.Windows.Forms.Button();
-            this.SavaData = new System.Windows.Forms.Button();
+            this.SaveData = new System.Windows.Forms.Button();
             this.ShowDataButton = new System.Windows.Forms.Button();
             this.GenerateDataButton = new System.Windows.Forms.Button();
             this.AlgorithmLabel = new System.Windows.Forms.Label();
@@ -51,14 +51,14 @@ namespace FormsApp
             this.BestInfoLabel = new System.Windows.Forms.Label();
             this.BestLabel = new System.Windows.Forms.Label();
             this.FileNameInfoLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.FileNameLabel = new System.Windows.Forms.Label();
             this.MainGroupBox.SuspendLayout();
             this.LoadDataGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainGroupBox
             // 
-            this.MainGroupBox.Controls.Add(this.label1);
+            this.MainGroupBox.Controls.Add(this.FileNameLabel);
             this.MainGroupBox.Controls.Add(this.FileNameInfoLabel);
             this.MainGroupBox.Controls.Add(this.BestLabel);
             this.MainGroupBox.Controls.Add(this.BestInfoLabel);
@@ -122,7 +122,7 @@ namespace FormsApp
             // 
             this.LoadDataGroupBox.Controls.Add(this.FoundDataFilesListBox);
             this.LoadDataGroupBox.Controls.Add(this.SearchFolderButton);
-            this.LoadDataGroupBox.Controls.Add(this.SavaData);
+            this.LoadDataGroupBox.Controls.Add(this.SaveData);
             this.LoadDataGroupBox.Controls.Add(this.ShowDataButton);
             this.LoadDataGroupBox.Controls.Add(this.GenerateDataButton);
             this.LoadDataGroupBox.Location = new System.Drawing.Point(6, 214);
@@ -152,15 +152,15 @@ namespace FormsApp
             this.SearchFolderButton.UseVisualStyleBackColor = true;
             this.SearchFolderButton.Click += new System.EventHandler(this.SearchFolderButton_Click);
             // 
-            // SavaData
+            // SaveData
             // 
-            this.SavaData.Location = new System.Drawing.Point(115, 55);
-            this.SavaData.Name = "SavaData";
-            this.SavaData.Size = new System.Drawing.Size(102, 27);
-            this.SavaData.TabIndex = 6;
-            this.SavaData.Text = "Zapisz";
-            this.SavaData.UseVisualStyleBackColor = true;
-            this.SavaData.Click += new System.EventHandler(this.SavaData_Click);
+            this.SaveData.Location = new System.Drawing.Point(115, 55);
+            this.SaveData.Name = "SavaData";
+            this.SaveData.Size = new System.Drawing.Size(102, 27);
+            this.SaveData.TabIndex = 6;
+            this.SaveData.Text = "Zapisz";
+            this.SaveData.UseVisualStyleBackColor = true;
+            this.SaveData.Click += new System.EventHandler(this.SaveData_Click);
             // 
             // ShowDataButton
             // 
@@ -170,7 +170,7 @@ namespace FormsApp
             this.ShowDataButton.TabIndex = 6;
             this.ShowDataButton.Text = "Wyświetl dane";
             this.ShowDataButton.UseVisualStyleBackColor = true;
-            this.ShowDataButton.Click += new System.EventHandler(this.GenerateDataButton_Click);
+            this.ShowDataButton.Click += new System.EventHandler(this.ShowDataButton_Click);
             // 
             // GenerateDataButton
             // 
@@ -273,14 +273,14 @@ namespace FormsApp
             this.FileNameInfoLabel.TabIndex = 13;
             this.FileNameInfoLabel.Text = "Plik:";
             // 
-            // label1
+            // FileNameLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(103, 206);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(29, 15);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Plik:";
+            this.FileNameLabel.AutoSize = true;
+            this.FileNameLabel.Location = new System.Drawing.Point(72, 181);
+            this.FileNameLabel.Name = "FileNameLabel";
+            this.FileNameLabel.Size = new System.Drawing.Size(12, 15);
+            this.FileNameLabel.TabIndex = 13;
+            this.FileNameLabel.Text = "-";
             // 
             // MainForm
             // 
@@ -312,7 +312,7 @@ namespace FormsApp
         private Button ClearLogButton;
         private Button InstructionsButton;
         private Button SolveButton;
-        private Button SavaData;
+        private Button SaveData;
         private Button GenerateDataButton;
         private Button ShowDataButton;
         private Label BestLabel;
@@ -321,7 +321,7 @@ namespace FormsApp
         private Label CountJobsInfoLabel;
         private Label DataLoadedLabel;
         private Label DataLoadedInfoLabel;
-        private Label label1;
+        private Label FileNameLabel;
         private Label FileNameInfoLabel;
     }
 }

@@ -36,7 +36,7 @@ namespace FormsApp
             LogRichTextBox.AppendText($"{DateTime.UtcNow:HH:mm:ss.fff} : {toLog}\n");
         }
 
-        private void SavaData_Click(object sender, EventArgs e)
+        private void SaveData_Click(object sender, EventArgs e)
         {
             if (data == null || data.Count == 0) { Logging?.Invoke("Dane niezaładowane, nie można zapisać"); }
             else
@@ -75,8 +75,8 @@ namespace FormsApp
                 else
                 {
                     data = Generator.GenerateJobs(frm.GeneratorOptions);
+                    ChangeDataLabels();
                     Logging?.Invoke("Wygenerowano dane");
-                    // TODO uzupełnienie Labelek
                 }
                 frm.Dispose();
             }
@@ -87,7 +87,7 @@ namespace FormsApp
 
         }
 
-        private void ChangeDataLabels()
+        private void ChangeDataLabels(string fileName = null)
         {
             if (data == null || data.Count == 0)
             {
@@ -99,7 +99,16 @@ namespace FormsApp
                 DataLoadedLabel.Text = "Załadowane";
                 DataLoadedLabel.ForeColor = Color.Green;
                 CountJobsLabel.Text = data.Count.ToString();
-                BestLabel 
+                if (fileName != null)
+                {
+                    BestLabel.Text = Loader.FindBest(fileName).ToString();
+                    FileNameLabel.Text = fileName;
+                }
+                else
+                {
+                    BestLabel.Text = "-";
+                    FileNameLabel.Text = "-";
+                }
             }
         }
 

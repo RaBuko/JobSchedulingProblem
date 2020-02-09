@@ -86,5 +86,10 @@ namespace FormsApp.Helpers
         {
             return JsonConvert.SerializeObject(obj, Formatting.Indented);
         }
+
+        internal static object FindBest(string fileName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
