@@ -64,7 +64,7 @@ namespace Solver.Methods
                     {
                         index = jobs.Count - j - 1;
                         tmp = tmp.ReplaceAt(j, '0');
-                        opt = Math.Max(cmax - jobs[index].Term, 0) * jobs[index].Weight;
+                        opt = jobs[index].CountPenalty(cmax);
                         result = subsets[tmp] + opt; // OPT(xn,..,xi+1,xi-1,..,x0) + wx*Tx 
                         logging?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}\n");
                         rozw = Math.Min(rozw, result); // wybranie najmniejszego kosztu dla danego i

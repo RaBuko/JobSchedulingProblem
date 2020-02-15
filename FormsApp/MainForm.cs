@@ -32,6 +32,31 @@ namespace FormsApp
             AlgorithmChangeComboBox.SelectedIndex = 0;
         }
 
+        private void DrawingPanel_Paint(object sender, PaintEventArgs pe)
+        {
+            Graphics g = pe.Graphics;
+            SolidBrush brush = new SolidBrush(Color.Red);
+            Rectangle rect = new Rectangle() { X = 0, Y = 10, Width = 0, Height = 10 };
+            if (data != null)
+            {
+                Log(data.Min(x => x.Time).ToString());
+                for (int i = 0; i < data.Count; i++)
+                {
+                    Log(rect.ToString());
+                    rect.Width = data[i].Time;
+                    g.FillRectangle(brush, rect);
+                    rect.X += rect.Width + 1;
+                }  
+            }
+        }
+
+        private void InstructionsButton_Click(object sender, EventArgs e)
+        {
+            var readme = Loader.LoadFileFromAppDirectory(Program.AppSettings.ReadmeFileName);
+            Log(readme);
+            MainGraphicPanel.Invalidate();
+        }
+
         private void SolveButton_Click(object sender, EventArgs e)
         {
             if (methodOptions == null) logging?.Invoke("Nie podano parametrów do algorytmu");
@@ -42,6 +67,7 @@ namespace FormsApp
                 var algorithm = Activator.CreateInstance(algorithmType) as IMethod;
                 methodOptions.Data = data;
 
+                // TODO threading
                 Stopwatch stopwatch = new Stopwatch();
                 methodOptions = algorithm.Prepare(methodOptions);
                 var results = algorithm.Solve(methodOptions, stopwatch, methodOptions.LogEverything ? logging : null);
@@ -71,12 +97,6 @@ namespace FormsApp
                 }
                 frm.Dispose();
             }
-        }
-
-        private void InstructionsButton_Click(object sender, EventArgs e)
-        {
-            var readme = Loader.LoadFileFromAppDirectory(Program.AppSettings.ReadmeFileName);
-            Log(readme);
         }
 
         private void Log(string toLog)

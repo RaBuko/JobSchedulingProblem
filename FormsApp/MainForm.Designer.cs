@@ -53,6 +53,7 @@ namespace FormsApp
             this.AlgorithmLabel = new System.Windows.Forms.Label();
             this.AlgorithmChangeComboBox = new System.Windows.Forms.ComboBox();
             this.LogRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.MainGraphicPanel = new System.Windows.Forms.Panel();
             this.MainGroupBox.SuspendLayout();
             this.LoadDataGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -280,16 +281,25 @@ namespace FormsApp
             this.LogRichTextBox.Location = new System.Drawing.Point(12, 12);
             this.LogRichTextBox.Name = "LogRichTextBox";
             this.LogRichTextBox.ReadOnly = true;
-            this.LogRichTextBox.Size = new System.Drawing.Size(535, 426);
+            this.LogRichTextBox.Size = new System.Drawing.Size(535, 133);
             this.LogRichTextBox.TabIndex = 3;
             this.LogRichTextBox.Text = "";
-            this.LogRichTextBox.TextChanged += LogRichTextBox_TextChanged;
+            // 
+            // MainGraphicPanel
+            // 
+            this.MainGraphicPanel.Location = new System.Drawing.Point(12, 151);
+            this.MainGraphicPanel.Name = "MainGraphicPanel";
+            this.MainGraphicPanel.Size = new System.Drawing.Size(535, 281);
+            this.MainGraphicPanel.TabIndex = 4;
+            this.MainGraphicPanel.Paint += this.DrawingPanel_Paint;
+            this.MainGraphicPanel.AutoScroll = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.MainGraphicPanel);
             this.Controls.Add(this.LogRichTextBox);
             this.Controls.Add(this.MainGroupBox);
             this.Name = "MainForm";
@@ -332,6 +342,7 @@ namespace FormsApp
         private Label DataLoadedInfoLabel;
         private Label FileNameLabel;
         private Label FileNameInfoLabel;
+        private Panel MainGraphicPanel;
     }
 }
 
