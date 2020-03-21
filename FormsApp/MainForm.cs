@@ -9,6 +9,8 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 
 namespace FormsApp
 {
@@ -32,29 +34,59 @@ namespace FormsApp
             AlgorithmChangeComboBox.SelectedIndex = 0;
         }
 
+        private int lastHeightPanel = 0;
+        private readonly int SpaceYBetweenJobs = 3;
+        private readonly int SpaceXBetweenJobs = 3;
+        private readonly int JobHeight = 10;
+        private Bitmap _canvas;
+
+        private void ClearDrawingPanel()
+        {
+            Bitmap tmp = new Bitmap(DrawingPanel.Width, DrawingPanel.Height, PixelFormat.Format32bppRgb);
+            using (Graphics g = Graphics.FromImage(tmp))
+            {
+                g.Clear(Color.White);
+                if (_canvas != null)
+                {
+                    g.DrawImage(_canvas, 0, 0);
+                    _canvas.Dispose();
+                }
+            }
+            _canvas = tmp;
+        }
+
+        GraphicsState State;
         private void DrawingPanel_Paint(object sender, PaintEventArgs pe)
         {
             Graphics g = pe.Graphics;
-            SolidBrush brush = new SolidBrush(Color.Red);
-            Rectangle rect = new Rectangle() { X = 0, Y = 10, Width = 0, Height = 10 };
+            SolidBrush brush = new SolidBrush(Color.FromArgb(200, 200, 200, 255));
+            Rectangle rect = new Rectangle() { X = 0, Y = lastHeightPanel, Width = 0, Height = JobHeight };
             if (data != null)
             {
-                Log(data.Min(x => x.Time).ToString());
                 for (int i = 0; i < data.Count; i++)
                 {
                     Log(rect.ToString());
                     rect.Width = data[i].Time;
                     g.FillRectangle(brush, rect);
-                    rect.X += rect.Width + 1;
-                }  
+                    if (rect.X + rect.Width > DrawingPanel.Width)
+                    {
+                        rect.X = 0;
+                        rect.Y += rect.Height + SpaceYBetweenJobs;
+                    }
+                    else
+                    {
+                        rect.X += rect.Width + SpaceXBetweenJobs;
+                    }
+                }
             }
+            lastHeightPanel = rect.Y + JobHeight + SpaceYBetweenJobs;
         }
 
         private void InstructionsButton_Click(object sender, EventArgs e)
         {
             var readme = Loader.LoadFileFromAppDirectory(Program.AppSettings.ReadmeFileName);
             Log(readme);
-            MainGraphicPanel.Invalidate();
+            DrawingPanel.Invalidate();
         }
 
         private void SolveButton_Click(object sender, EventArgs e)
@@ -183,12 +215,12 @@ namespace FormsApp
                 CountJobsLabel.Text = data.Count.ToString();
                 if (fileName != null)
                 {
-                    BestLabel.Text = Loader.FindBest(fileName);
+                    BestScoreLabel.Text = Loader.FindBest(fileName);
                     FileNameLabel.Text = fileName;
                 }
                 else
                 {
-                    BestLabel.Text = "-";
+                    BestScoreLabel.Text = "-";
                     FileNameLabel.Text = "-";
                 }
             }
