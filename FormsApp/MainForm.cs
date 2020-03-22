@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FormsApp
 {
@@ -38,28 +40,16 @@ namespace FormsApp
         private readonly int SpaceYBetweenJobs = 3;
         private readonly int SpaceXBetweenJobs = 3;
         private readonly int JobHeight = 10;
-        private Bitmap _canvas;
+        readonly Stack<Rectangle> rectanglesBuffer = new Stack<Rectangle>();
 
-        private void ClearDrawingPanel()
-        {
-            Bitmap tmp = new Bitmap(DrawingPanel.Width, DrawingPanel.Height, PixelFormat.Format32bppRgb);
-            using (Graphics g = Graphics.FromImage(tmp))
-            {
-                g.Clear(Color.White);
-                if (_canvas != null)
-                {
-                    g.DrawImage(_canvas, 0, 0);
-                    _canvas.Dispose();
-                }
-            }
-            _canvas = tmp;
-        }
-
-        GraphicsState State;
         private void DrawingPanel_Paint(object sender, PaintEventArgs pe)
         {
-            Graphics g = pe.Graphics;
-            SolidBrush brush = new SolidBrush(Color.FromArgb(200, 200, 200, 255));
+            if (lastHeightPanel + JobHeight * 3 > DrawingPanel.Height)
+            {
+                rectanglesBuffer.Clear();
+                lastHeightPanel = 0;
+            }
+
             Rectangle rect = new Rectangle() { X = 0, Y = lastHeightPanel, Width = 0, Height = JobHeight };
             if (data != null)
             {
@@ -67,7 +57,7 @@ namespace FormsApp
                 {
                     Log(rect.ToString());
                     rect.Width = data[i].Time;
-                    g.FillRectangle(brush, rect);
+                    rectanglesBuffer.Push(rect);
                     if (rect.X + rect.Width > DrawingPanel.Width)
                     {
                         rect.X = 0;
@@ -80,6 +70,14 @@ namespace FormsApp
                 }
             }
             lastHeightPanel = rect.Y + JobHeight + SpaceYBetweenJobs;
+
+            using Graphics g = pe.Graphics;
+            using var brush = new SolidBrush(Color.FromArgb(200, 200, 200, 255));
+            foreach (var r in rectanglesBuffer)
+            {
+                g.FillRectangle(brush, r);
+            }
+            g.Save();
         }
 
         private void InstructionsButton_Click(object sender, EventArgs e)
@@ -89,7 +87,7 @@ namespace FormsApp
             DrawingPanel.Invalidate();
         }
 
-        private void SolveButton_Click(object sender, EventArgs e)
+        private async void SolveButton_Click(object sender, EventArgs e)
         {
             if (methodOptions == null) logging?.Invoke("Nie podano parametrów do algorytmu");
             else
@@ -99,12 +97,14 @@ namespace FormsApp
                 var algorithm = Activator.CreateInstance(algorithmType) as IMethod;
                 methodOptions.Data = data;
 
-                // TODO threading
-                Stopwatch stopwatch = new Stopwatch();
-                methodOptions = algorithm.Prepare(methodOptions);
-                var results = algorithm.Solve(methodOptions, stopwatch, methodOptions.LogEverything ? logging : null);
-                logging.Invoke($"Rezultat: {string.Join(",", results.Item1)}");
-                logging.Invoke($"Best: {results.Item2}");
+                await Task.Run(() =>
+                {
+                    Stopwatch stopwatch = new Stopwatch();
+                    methodOptions = algorithm.Prepare(methodOptions);
+                    var results = algorithm.Solve(methodOptions, stopwatch, methodOptions.LogEverything ? logging : null);
+                    logging.Invoke($"Rezultat: {string.Join(",", results.Item1)}");
+                    logging.Invoke($"Best: {results.Item2}");
+                });
             }
         }
 
@@ -131,9 +131,22 @@ namespace FormsApp
             }
         }
 
+        delegate void LogCallback(string text);
+
         private void Log(string toLog)
         {
-            LogRichTextBox.AppendText($"{DateTime.UtcNow:HH:mm:ss.fff} : {toLog}\n");
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (LogRichTextBox.InvokeRequired)
+            {
+                LogCallback d = new LogCallback(Log);
+                Invoke(d, new object[] { toLog });
+            }
+            else
+            {
+                LogRichTextBox.AppendText($"{DateTime.UtcNow:HH:mm:ss.fff} : {toLog}\n");
+            }
         }
 
         private void SaveData_Click(object sender, EventArgs e)
