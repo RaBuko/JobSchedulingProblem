@@ -25,7 +25,7 @@ namespace Solver.Methods
             return dynamicProgrammingOptions;
         }
 
-        public (List<int>, int) Solve(IMethodOptions options, Stopwatch stopwatch, Action<string> logging = null)
+        public (List<int>, int) Solve(IMethodOptions options, Stopwatch stopwatch, GuiActions guiActions = null)
         {
             DynamicProgrammingOptions dpaOptions = options as DynamicProgrammingOptions;
             var jobs = dpaOptions.Data;
@@ -39,14 +39,14 @@ namespace Solver.Methods
             string tmp = string.Empty;
 
 
-            logging?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n");
+            guiActions?.Log?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n");
             if (!stopwatch.IsRunning) stopwatch.Start();
             for (int i = 1; i < dpaOptions.Subsets.Count; i++)
             {
                 tmp = i.IntToBin(jobs.Count);
                 rozw = int.MaxValue;
                 cmax = 0;
-                logging?.Invoke($"OPT({tmp}):\n");
+                guiActions?.Log?.Invoke($"OPT({tmp}):\n");
 
                 for (int j = 0; j < tmp.Length; j++)
                 {
@@ -56,7 +56,7 @@ namespace Solver.Methods
                     }
                 }
 
-                logging?.Invoke($"\tCMAX : {cmax}\n");
+                guiActions?.Log?.Invoke($"\tCMAX : {cmax}\n");
 
                 for (int j = 0; j < tmp.Length; j++)
                 {
@@ -66,7 +66,7 @@ namespace Solver.Methods
                         tmp = tmp.ReplaceAt(j, '0');
                         opt = jobs[index].CountPenalty(cmax);
                         result = subsets[tmp] + opt; // OPT(xn,..,xi+1,xi-1,..,x0) + wx*Tx 
-                        logging?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}\n");
+                        guiActions?.Log?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}\n");
                         rozw = Math.Min(rozw, result); // wybranie najmniejszego kosztu dla danego i
                         tmp = i.IntToBin(jobs.Count);
                     }
@@ -75,7 +75,7 @@ namespace Solver.Methods
             }
 
             if (stopwatch.IsRunning) stopwatch.Stop();
-            logging?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n");
+            guiActions?.Log?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n");
 
             return (new List<int>(), rozw);
         }

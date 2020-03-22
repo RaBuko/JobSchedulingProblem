@@ -8,6 +8,6 @@ namespace Solver.Methods
     {
         IMethodOptions Prepare(IMethodOptions options);
 
-        (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch, Action<string> logging = null);
+        (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch, GuiActions guiActions = null);
     }
 }

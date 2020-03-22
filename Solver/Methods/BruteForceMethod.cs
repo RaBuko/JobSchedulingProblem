@@ -14,7 +14,7 @@ namespace Solver.Methods
             return bruteForceOptions;
         }
 
-        public (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch, Action<string> logging = null)
+        public (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch, GuiActions guiActions = null)
         {
             var data = options.Data;
             int time = 0;
@@ -24,7 +24,7 @@ namespace Solver.Methods
             int [] temp = data.Select(x => x.Index).ToArray();
             int [] bestOrder = temp;
 
-            logging?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n");
+            guiActions?.Log?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n");
             if (!stopwatch.IsRunning) stopwatch.Start();
 
             while (true)
@@ -34,21 +34,21 @@ namespace Solver.Methods
 
                 for (int it = 0; it < jobCount; it++)
                 {
-                    logging?.Invoke(temp[it] + (it != jobCount - 1 ? ",": string.Empty));
+                    guiActions?.Log?.Invoke(temp[it] + (it != jobCount - 1 ? ",": string.Empty));
                     time += data[temp[it]].Time;
                     penalty += data[temp[it]].CountPenalty(time);
                 }
 
-                logging?.Invoke($" | Wynik = {penalty}");
+                guiActions?.Log?.Invoke($" | Wynik = {penalty}");
 
                 if (minPenalty > penalty)
                 {
-                    logging?.Invoke(" < BEST");
+                    guiActions?.Log?.Invoke(" < BEST");
                     minPenalty = penalty;
                     bestOrder = (int [])temp.Clone();
                 }
 
-                logging?.Invoke("\n");
+                guiActions?.Log?.Invoke("\n");
 
                 int i = jobCount - 1;
                 while (i > 0 && temp[i - 1] >= temp[i]) { i--; }
@@ -67,7 +67,7 @@ namespace Solver.Methods
 
             }
             if (stopwatch.IsRunning) stopwatch.Stop();
-            logging?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n");
+            guiActions?.Log?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n");
             return (bestOrder.ToList(), minPenalty);
         }
     }
