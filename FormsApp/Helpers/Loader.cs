@@ -71,6 +71,7 @@ namespace FormsApp.Helpers
         private static T LoadJson<T>(string filePath) where T : class => JsonConvert.DeserializeObject<T>(filePath);
 
         internal static string ParseToJsonString(object obj) => JsonConvert.SerializeObject(obj, Formatting.Indented);
+
         #endregion
 
         internal static string GetExampleDataPath(string relativePath, string fileName = null) => Path.Combine(Directory.GetCurrentDirectory(), relativePath, fileName ?? "");
@@ -96,13 +97,13 @@ namespace FormsApp.Helpers
             {
                 return "-";
             }
-            
+
         }
 
-        internal static List<string> SearchDirectoryForJobsFiles(string directoryPath, Action<string> logging)
+        internal static List<string> SearchDirectoryForJobsFiles(string directoryPath, Action<string, List<Job>, bool> logging)
         {
             List<string> foundFiles = new List<string>();
-            logging?.Invoke($"Przeszukiwany folder: {directoryPath}");
+            logging?.Invoke($"Przeszukiwany folder: {directoryPath}", null, true);
             foreach (var file in Directory.GetFiles(directoryPath))
             {
                 try
@@ -111,19 +112,41 @@ namespace FormsApp.Helpers
                 }
                 catch (InvalidDataException)
                 {
-                    logging?.Invoke($"{Path.GetFileName(file)} nie ma właściwego formatu zadań");
+                    logging?.Invoke($"{Path.GetFileName(file)} nie ma właściwego formatu zadań", null, true);
                     continue;
                 }
                 catch (Exception)
                 {
-                    logging?.Invoke($"Plik {Path.GetFileName(file)} jest niepoprawny");
+                    logging?.Invoke($"Plik {Path.GetFileName(file)} jest niepoprawny", null, true);
                     continue;
                 }
 
                 foundFiles.Add(file);
             }
-            logging?.Invoke($"Znaleziono plików: {foundFiles.Count()}");
+            logging?.Invoke($"Znaleziono plików: {foundFiles.Count()}", null, true);
             return foundFiles;
+        }
+
+        internal static bool TrySaveNewBest(string fileName, decimal newBest)
+        {
+            bool save;
+            if (!string.IsNullOrWhiteSpace(fileName))
+            {
+                var foundBest = FindBest(fileName);
+                save = foundBest.Contains("-") || int.Parse(foundBest) < newBest;
+            }
+            else
+            {
+                save = true;
+            }
+
+            if (save)
+            {
+                var json = LoadJson<Dictionary<string, string>>(LoadFileFromAppDirectory(Program.AppSettings.SolvedDictFileName));
+                json[Path.GetFileNameWithoutExtension(fileName)] = newBest.ToString();
+                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), Program.AppSettings.SolvedDictFileName), JsonConvert.SerializeObject(json));
+            }
+            return save;
         }
     }
 }

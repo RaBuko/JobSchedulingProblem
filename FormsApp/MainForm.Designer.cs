@@ -39,11 +39,9 @@ namespace FormsApp
             this.ShowDataButton = new System.Windows.Forms.Button();
             this.GenerateDataButton = new System.Windows.Forms.Button();
             this.InfoGroupBox = new System.Windows.Forms.GroupBox();
-            this.BestOrderInfoLabel = new System.Windows.Forms.Label();
-            this.BestOrderPanel = new System.Windows.Forms.Panel();
-            this.DataLoadedLabel = new System.Windows.Forms.Label();
-            this.FileNameLabel = new System.Windows.Forms.Label();
             this.BestScoreLabel = new System.Windows.Forms.Label();
+            this.FileNameLabel = new System.Windows.Forms.Label();
+            this.DataLoadedLabel = new System.Windows.Forms.Label();
             this.CountJobsLabel = new System.Windows.Forms.Label();
             this.BestScoreInfoLabel = new System.Windows.Forms.Label();
             this.FileNameInfoLabel = new System.Windows.Forms.Label();
@@ -56,7 +54,6 @@ namespace FormsApp
             this.AlgorithmLabel = new System.Windows.Forms.Label();
             this.AlgorithmChangeComboBox = new System.Windows.Forms.ComboBox();
             this.LogRichTextBox = new System.Windows.Forms.RichTextBox();
-            this.DrawingPanel = new System.Windows.Forms.Panel();
             this.MainGroupBox.SuspendLayout();
             this.LoadDataGroupBox.SuspendLayout();
             this.InfoGroupBox.SuspendLayout();
@@ -147,8 +144,6 @@ namespace FormsApp
             // 
             this.InfoGroupBox.Controls.Add(this.BestScoreLabel);
             this.InfoGroupBox.Controls.Add(this.FileNameLabel);
-            this.InfoGroupBox.Controls.Add(this.BestOrderInfoLabel);
-            this.InfoGroupBox.Controls.Add(this.BestOrderPanel);
             this.InfoGroupBox.Controls.Add(this.DataLoadedLabel);
             this.InfoGroupBox.Controls.Add(this.CountJobsLabel);
             this.InfoGroupBox.Controls.Add(this.BestScoreInfoLabel);
@@ -162,32 +157,14 @@ namespace FormsApp
             this.InfoGroupBox.TabStop = false;
             this.InfoGroupBox.Text = "Info";
             // 
-            // BestOrderInfoLabel
+            // BestScoreLabel
             // 
-            this.BestOrderInfoLabel.AutoSize = true;
-            this.BestOrderInfoLabel.Location = new System.Drawing.Point(6, 79);
-            this.BestOrderInfoLabel.Name = "BestOrderInfoLabel";
-            this.BestOrderInfoLabel.Size = new System.Drawing.Size(119, 15);
-            this.BestOrderInfoLabel.TabIndex = 11;
-            this.BestOrderInfoLabel.Text = "Najlepsze ustawienie:";
-            // 
-            // BestOrderPanel
-            // 
-            this.BestOrderPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.BestOrderPanel.Location = new System.Drawing.Point(6, 97);
-            this.BestOrderPanel.Name = "BestOrderPanel";
-            this.BestOrderPanel.Size = new System.Drawing.Size(211, 147);
-            this.BestOrderPanel.TabIndex = 14;
-            // 
-            // DataLoadedLabel
-            // 
-            this.DataLoadedLabel.AutoSize = true;
-            this.DataLoadedLabel.ForeColor = System.Drawing.Color.Red;
-            this.DataLoadedLabel.Location = new System.Drawing.Point(75, 19);
-            this.DataLoadedLabel.Name = "DataLoadedLabel";
-            this.DataLoadedLabel.Size = new System.Drawing.Size(87, 15);
-            this.DataLoadedLabel.TabIndex = 8;
-            this.DataLoadedLabel.Text = "Niezaładowane";
+            this.BestScoreLabel.AutoSize = true;
+            this.BestScoreLabel.Location = new System.Drawing.Point(76, 64);
+            this.BestScoreLabel.Name = "BestScoreLabel";
+            this.BestScoreLabel.Size = new System.Drawing.Size(12, 15);
+            this.BestScoreLabel.TabIndex = 12;
+            this.BestScoreLabel.Text = "-";
             // 
             // FileNameLabel
             // 
@@ -198,14 +175,15 @@ namespace FormsApp
             this.FileNameLabel.TabIndex = 13;
             this.FileNameLabel.Text = "-";
             // 
-            // BestScoreLabel
+            // DataLoadedLabel
             // 
-            this.BestScoreLabel.AutoSize = true;
-            this.BestScoreLabel.Location = new System.Drawing.Point(76, 64);
-            this.BestScoreLabel.Name = "BestScoreLabel";
-            this.BestScoreLabel.Size = new System.Drawing.Size(12, 15);
-            this.BestScoreLabel.TabIndex = 12;
-            this.BestScoreLabel.Text = "-";
+            this.DataLoadedLabel.AutoSize = true;
+            this.DataLoadedLabel.ForeColor = System.Drawing.Color.Red;
+            this.DataLoadedLabel.Location = new System.Drawing.Point(75, 19);
+            this.DataLoadedLabel.Name = "DataLoadedLabel";
+            this.DataLoadedLabel.Size = new System.Drawing.Size(87, 15);
+            this.DataLoadedLabel.TabIndex = 8;
+            this.DataLoadedLabel.Text = "Niezaładowane";
             // 
             // CountJobsLabel
             // 
@@ -311,22 +289,12 @@ namespace FormsApp
             // 
             // LogRichTextBox
             // 
-            this.LogRichTextBox.Location = new System.Drawing.Point(253, 463);
+            this.LogRichTextBox.Location = new System.Drawing.Point(253, 12);
             this.LogRichTextBox.Name = "LogRichTextBox";
             this.LogRichTextBox.ReadOnly = true;
-            this.LogRichTextBox.Size = new System.Drawing.Size(775, 156);
+            this.LogRichTextBox.Size = new System.Drawing.Size(775, 607);
             this.LogRichTextBox.TabIndex = 3;
             this.LogRichTextBox.Text = "";
-            // 
-            // DrawingPanel
-            // 
-            this.DrawingPanel.AutoScroll = true;
-            this.DrawingPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.DrawingPanel.Location = new System.Drawing.Point(253, 12);
-            this.DrawingPanel.Name = "DrawingPanel";
-            this.DrawingPanel.Size = new System.Drawing.Size(775, 445);
-            this.DrawingPanel.TabIndex = 4;
-            this.DrawingPanel.Paint += DrawingPanel_Paint;
             // 
             // MainForm
             // 
@@ -334,7 +302,6 @@ namespace FormsApp
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1040, 631);
             this.Controls.Add(this.LogRichTextBox);
-            this.Controls.Add(this.DrawingPanel);
             this.Controls.Add(this.MainGroupBox);
             this.Name = "MainForm";
             this.Text = "Problem szeregowania zadań";
@@ -378,10 +345,7 @@ namespace FormsApp
         private Label DataLoadedInfoLabel;
         private Label FileNameLabel;
         private Label FileNameInfoLabel;
-        private Panel DrawingPanel;
         private GroupBox InfoGroupBox;
-        private Label BestOrderInfoLabel;
-        private Panel BestOrderPanel;
     }
 }
 

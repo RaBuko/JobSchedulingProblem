@@ -18,32 +18,34 @@ namespace FormsApp
 {
     public partial class MainForm
     {
+        private string LoadedFile;
+
         private void SaveData_Click(object sender, EventArgs e)
         {
-            if (data == null || data.Count == 0) { logging?.Invoke("Dane niezaładowane, nie można zapisać"); }
+            if (data == null || data.Count == 0) { logging?.Invoke("Dane niezaładowane, nie można zapisać", null, true); }
             else
             {
-                logging?.Invoke("Zapis danych...");
+                logging?.Invoke("Zapis danych...", null, true);
                 var module = new FileSavingDialog();
-                module.SaveData(data);
+                LoadedFile = module.SaveData(data);
                 if (lastSearchedDirectory != null) LoadFoundDataFiles(lastSearchedDirectory);
-                logging?.Invoke("Koniec");
+                logging?.Invoke("Koniec", null, true);
             }
         }
 
         private void ShowDataButton_Click(object sender, EventArgs e)
         {
-            if (data == null || data.Count == 0) { logging?.Invoke("Dane niezaładowane, nie można pokazać"); }
+            if (data == null || data.Count == 0) { logging?.Invoke("Dane niezaładowane, nie można pokazać", null, true); }
             else
             {
-                logging?.Invoke($"Ilość zadań: {data.Count}");
-                logging?.Invoke(string.Join('\n', data.Select(x => x.ToString())));
+                logging?.Invoke($"Ilość zadań: {data.Count}", null, true);
+                logging?.Invoke(string.Join('\n', data.Select(x => x.ToString())), null, true);
             }
         }
 
         private void GenerateDataButton_Click(object sender, EventArgs e)
         {
-            logging?.Invoke("Generowanie danych...");
+            logging?.Invoke("Generowanie danych...", null, true);
             GenerateDataForm generateDataForm = new GenerateDataForm(Log);
             generateDataForm.Show();
             generateDataForm.VisibleChanged += GenerateDataFormVisibleChanged;
@@ -54,12 +56,12 @@ namespace FormsApp
             GenerateDataForm frm = (GenerateDataForm)sender;
             if (!frm.Visible)
             {
-                if (frm.GeneratorOptions == null) logging?.Invoke("Przerwano generowanie danych");
+                if (frm.GeneratorOptions == null) logging?.Invoke("Przerwano generowanie danych", null, true);
                 else
                 {
                     data = Generator.GenerateJobs(frm.GeneratorOptions);
                     ChangeDataLabels();
-                    logging?.Invoke("Wygenerowano dane");
+                    logging?.Invoke("Wygenerowano dane", null, true);
                 }
                 frm.Dispose();
             }
@@ -110,11 +112,11 @@ namespace FormsApp
 
         private void FoundDataFilesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var chosenFile = foundFiles[FoundDataFilesListBox.SelectedIndex];
-            logging?.Invoke($"Wczytywanie pliku {chosenFile}");
-            data = Loader.LoadJobsFromFile(chosenFile);
-            ChangeDataLabels(Path.GetFileName(chosenFile));
-            logging?.Invoke("Plik wczytany");
+            LoadedFile = foundFiles[FoundDataFilesListBox.SelectedIndex];
+            logging?.Invoke($"Wczytywanie pliku {LoadedFile}", null, true);
+            data = Loader.LoadJobsFromFile(LoadedFile);
+            ChangeDataLabels(Path.GetFileName(LoadedFile));
+            logging?.Invoke("Plik wczytany", null, true);
         }
     }
 }

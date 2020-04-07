@@ -8,7 +8,7 @@ namespace FormsApp.Dialogs
 {
     internal class FileSavingDialog
     {
-        internal void SaveData(List<Solver.Data.Job> data)
+        internal string SaveData(List<Solver.Data.Job> data)
         {
             Stream myStream;
             SaveFileDialog saveFileDialog1 = new SaveFileDialog
@@ -44,6 +44,7 @@ namespace FormsApp.Dialogs
                     myStream.Close();
                 }
             }
+            return saveFileDialog1.FileName;
         }
     }
 }

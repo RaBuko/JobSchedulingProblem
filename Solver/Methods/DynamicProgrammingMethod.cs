@@ -3,6 +3,7 @@ using Solver.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Solver.Methods
 {
@@ -10,6 +11,7 @@ namespace Solver.Methods
     {
         public IMethodOptions Prepare(IMethodOptions methodOptions)
         {
+            if (methodOptions == null) methodOptions = new DynamicProgrammingOptions();
             var subsets = new Dictionary<string, int>
             {
                 [0.IntToBin(methodOptions.Data.Count)] = 0
@@ -39,14 +41,14 @@ namespace Solver.Methods
             string tmp = string.Empty;
 
 
-            guiActions?.Log?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n");
+            guiActions?.Log?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n", null, true);
             if (!stopwatch.IsRunning) stopwatch.Start();
             for (int i = 1; i < dpaOptions.Subsets.Count; i++)
             {
                 tmp = i.IntToBin(jobs.Count);
                 rozw = int.MaxValue;
                 cmax = 0;
-                guiActions?.Log?.Invoke($"OPT({tmp}):\n");
+                guiActions?.Log?.Invoke($"OPT({tmp}):\n", null, true);
 
                 for (int j = 0; j < tmp.Length; j++)
                 {
@@ -56,7 +58,7 @@ namespace Solver.Methods
                     }
                 }
 
-                guiActions?.Log?.Invoke($"\tCMAX : {cmax}\n");
+                guiActions?.Log?.Invoke($"\tCMAX : {cmax}\n", null, true);
 
                 for (int j = 0; j < tmp.Length; j++)
                 {
@@ -66,18 +68,29 @@ namespace Solver.Methods
                         tmp = tmp.ReplaceAt(j, '0');
                         opt = jobs[index].CountPenalty(cmax);
                         result = subsets[tmp] + opt; // OPT(xn,..,xi+1,xi-1,..,x0) + wx*Tx 
-                        guiActions?.Log?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}\n");
+                        guiActions?.Log?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}\n", null, true);
                         rozw = Math.Min(rozw, result); // wybranie najmniejszego kosztu dla danego i
                         tmp = i.IntToBin(jobs.Count);
                     }
                 }
+                guiActions?.Log?.Invoke("", GetAllIndexes(tmp, jobs), false);
                 subsets[tmp] = rozw;
             }
 
             if (stopwatch.IsRunning) stopwatch.Stop();
-            guiActions?.Log?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n");
+            guiActions?.Log?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n", null, true);
 
             return (new List<int>(), rozw);
+        }
+
+        private List<Job> GetAllIndexes(string s, List<Job> allJobs)
+        {
+            var chosenJobs = new List<Job>();
+            for (int i = s.IndexOf('1'); i > -1; i = s.IndexOf('1', i + 1))
+            {
+                chosenJobs.Add(allJobs[i]);
+            }
+            return chosenJobs;
         }
     }
 }

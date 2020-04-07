@@ -1,4 +1,5 @@
 ﻿using FormsApp.Helpers;
+using Solver.Data;
 using Solver.Methods;
 using Solver.Utils;
 using System;
@@ -15,15 +16,15 @@ namespace FormsApp.Dialogs
         readonly TextBox[] textBoxes;
         readonly Label[] labels;
 
-        private readonly Action<string> logging;
+        private readonly Action<string, List<Job>, bool> logging;
         public IMethodOptions MethodOptions;
         private readonly List<PropertyInfo> userDefinedOptions;
 
-        public ParametersForm(Type optionsType, Action<string> inLogging)
+        public ParametersForm(Type optionsType, Action<string, List<Job>, bool> inLogging)
         {
             logging = inLogging;
             userDefinedOptions = optionsType.GetProperties().Where(x => x.GetCustomAttribute(typeof(UserDefined)) != null).ToList();
-            logging?.Invoke($"Ilość definiowanych przez użytkownika parametrów: {userDefinedOptions.Count()}");
+            logging?.Invoke($"Ilość definiowanych przez użytkownika parametrów: {userDefinedOptions.Count()}", null, true);
             MethodOptions = Activator.CreateInstance(optionsType) as IMethodOptions;
             InitializeComponent();
             textBoxes = new TextBox[userDefinedOptions.Count()];
@@ -82,7 +83,7 @@ namespace FormsApp.Dialogs
                 }
                 catch (Exception)
                 {
-                    logging?.Invoke($"Nie udało się przetłumaczyć pola {(optionProp.GetCustomAttribute(typeof(UserDefined)) as UserDefined).ParameterFormalName} na typ {optionProp.PropertyType}, wartość: {valueAsText}");
+                    logging?.Invoke($"Nie udało się przetłumaczyć pola {(optionProp.GetCustomAttribute(typeof(UserDefined)) as UserDefined).ParameterFormalName} na typ {optionProp.PropertyType}, wartość: {valueAsText}", null, true);
                 }
 
                 optionProp.SetValue(MethodOptions, value);
