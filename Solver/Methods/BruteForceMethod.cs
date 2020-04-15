@@ -24,46 +24,55 @@ namespace Solver.Methods
             options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
             if (!stopwatch.IsRunning) stopwatch.Start();
 
-            while (true)
+            try
             {
-                time = 0;
-                penalty = 0;
-
-                tolog = "";
-                for (int it = 0; it < jobCount; it++)
+                while (true)
                 {
-                    tolog += temp[it] + (it != jobCount - 1 ? "," : string.Empty);
-                    time += data[temp[it]].Time;
-                    penalty += data[temp[it]].CountPenalty(time);
+                    time = 0;
+                    penalty = 0;
+
+                    tolog = "";
+                    for (int it = 0; it < jobCount; it++)
+                    {
+                        tolog += temp[it] + (it != jobCount - 1 ? "," : string.Empty);
+                        time += data[temp[it]].Time;
+                        penalty += data[temp[it]].CountPenalty(time);
+                    }
+
+                    tolog += $" | Wynik = {penalty}";
+
+                    if (minPenalty > penalty)
+                    {
+                        tolog += " < BEST";
+                        minPenalty = penalty;
+                        bestOrder = (int[])temp.Clone();
+                    }
+
+                    options.GuiConnection?.LogText?.Invoke(tolog);
+
+                    int i = jobCount - 1;
+                    while (i > 0 && temp[i - 1] >= temp[i]) { i--; }
+
+
+                    if (i == 0)
+                    {
+                        break;
+                    }
+
+                    int j = i;
+                    while (j < jobCount && temp[j] > temp[i - 1]) j++;
+                    j--;
+                    IntManip.SwapInts(ref temp[i - 1], ref temp[j]);
+                    temp.ReverseSubarray(i, jobCount - 1);
+
+                    options.CancellationToken.ThrowIfCancellationRequested();
                 }
-
-                tolog += $" | Wynik = {penalty}";
-
-                if (minPenalty > penalty)
-                {
-                    tolog += " < BEST";
-                    minPenalty = penalty;
-                    bestOrder = (int[])temp.Clone();
-                }
-
-                options.GuiConnection?.LogText?.Invoke(tolog);
-
-                int i = jobCount - 1;
-                while (i > 0 && temp[i - 1] >= temp[i]) { i--; }
-
-
-                if (i == 0)
-                {
-                    break;
-                }
-
-                int j = i;
-                while (j < jobCount && temp[j] > temp[i - 1]) j++;
-                j--;
-                IntManip.SwapInts(ref temp[i - 1], ref temp[j]);
-                temp.ReverseSubarray(i, jobCount - 1);
-
             }
+            catch (OperationCanceledException)
+            {
+                options.GuiConnection?.LogText?.Invoke("Przerwano zadanie");
+            }
+
             return (bestOrder.ToList(), minPenalty);
         }
     }

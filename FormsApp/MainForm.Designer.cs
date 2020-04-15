@@ -157,7 +157,7 @@ namespace FormsApp
             // SaveDataButton
             // 
             this.SaveDataButton.Location = new System.Drawing.Point(115, 55);
-            this.SaveDataButton.Name = "SaveData";
+            this.SaveDataButton.Name = "SaveDataButton";
             this.SaveDataButton.Size = new System.Drawing.Size(102, 27);
             this.SaveDataButton.TabIndex = 6;
             this.SaveDataButton.Text = "Zapisz";

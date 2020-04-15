@@ -14,10 +14,21 @@ namespace FormsApp
     public partial class MainForm
     {
         private Task SolveTask;
+        private CancellationTokenSource CancellationTokenSource;
 
         private async void SolveButton_Click(object sender, EventArgs e)
         {
-            var preparedData = PrepareToSolve();
+            if (SolveTask?.Status == TaskStatus.Running)
+            {
+                LogText("Rozpoczęto bezpieczne przerwanie rozwiązywania");
+                CancellationTokenSource.Cancel();
+                SwitchUIMode();
+                return;
+            }
+
+            CancellationTokenSource = new CancellationTokenSource();
+
+            var preparedData = PrepareToSolve(CancellationTokenSource.Token);
 
             (List<int> bestOrder, int minimizedTardiness) results = (new List<int>(), int.MaxValue);
 
@@ -26,7 +37,7 @@ namespace FormsApp
             {
                 results = preparedData.method.Solve(preparedData.methodOptions, stopwatch);
                 if (stopwatch.IsRunning) stopwatch.Stop();
-            });
+            }, CancellationTokenSource.Token);
 
             SwitchUIMode();
             await SolveTask;
@@ -46,7 +57,7 @@ namespace FormsApp
             }
         }
 
-        private (IMethod method, IMethodOptions methodOptions) PrepareToSolve()
+        private (IMethod method, IMethodOptions methodOptions) PrepareToSolve(CancellationToken token)
         {
             var (methodType, methodOptionType) = algorithms[AlgorithmChangeComboBox.SelectedIndex];
             var method = Activator.CreateInstance(methodType) as IMethod;
@@ -64,6 +75,7 @@ namespace FormsApp
             }
 
             methodOptions.GuiConnection = guiConnection;
+            methodOptions.CancellationToken = token;
 
             methodOptions = method.Prepare(methodOptions);
 

@@ -41,39 +41,48 @@ namespace Solver.Methods
             options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
 
             if (!stopwatch.IsRunning) stopwatch.Start();
-            for (int i = 1; i < dpaOptions.Subsets.Count; i++)
+            try
             {
-                tmp = i.IntToBin(jobs.Count);
-                rozw = int.MaxValue;
-                cmax = 0;
-                options.GuiConnection?.LogText?.Invoke($"OPT({tmp}):");
-
-                for (int j = 0; j < tmp.Length; j++)
+                for (int i = 1; i < dpaOptions.Subsets.Count; i++)
                 {
-                    if (tmp[j].Equals('1'))
-                    {
-                        cmax += jobs[jobs.Count - j - 1].Time; // wyliczenie cmax calkowitego dla danego i
-                    }
-                }
+                    tmp = i.IntToBin(jobs.Count);
+                    rozw = int.MaxValue;
+                    cmax = 0;
+                    options.GuiConnection?.LogText?.Invoke($"OPT({tmp}):");
 
-                options.GuiConnection?.LogText?.Invoke($"\tCMAX : {cmax}");
-
-                for (int j = 0; j < tmp.Length; j++)
-                {
-                    if (tmp[j].Equals('1'))
+                    for (int j = 0; j < tmp.Length; j++)
                     {
-                        index = jobs.Count - j - 1;
-                        tmp = tmp.ReplaceAt(j, '0');
-                        opt = jobs[index].CountPenalty(cmax);
-                        result = subsets[tmp] + opt; // OPT(xn,..,xi+1,xi-1,..,x0) + wx*Tx 
-                        options.GuiConnection?.LogText?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}");
-                        rozw = Math.Min(rozw, result); // wybranie najmniejszego kosztu dla danego i
-                        tmp = i.IntToBin(jobs.Count);
+                        if (tmp[j].Equals('1'))
+                        {
+                            cmax += jobs[jobs.Count - j - 1].Time; // wyliczenie cmax calkowitego dla danego i
+                        }
                     }
+
+                    options.GuiConnection?.LogText?.Invoke($"\tCMAX : {cmax}");
+
+                    for (int j = 0; j < tmp.Length; j++)
+                    {
+                        if (tmp[j].Equals('1'))
+                        {
+                            index = jobs.Count - j - 1;
+                            tmp = tmp.ReplaceAt(j, '0');
+                            opt = jobs[index].CountPenalty(cmax);
+                            result = subsets[tmp] + opt; // OPT(xn,..,xi+1,xi-1,..,x0) + wx*Tx 
+                            options.GuiConnection?.LogText?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}");
+                            rozw = Math.Min(rozw, result); // wybranie najmniejszego kosztu dla danego i
+                            tmp = i.IntToBin(jobs.Count);
+                        }
+                    }
+                    options.GuiConnection?.LogGraphics?.Invoke(GetAllIndexes(tmp, jobs));
+                    subsets[tmp] = rozw;
+                    options.CancellationToken.ThrowIfCancellationRequested();
                 }
-                options.GuiConnection?.LogGraphics?.Invoke(GetAllIndexes(tmp, jobs));
-                subsets[tmp] = rozw;
             }
+            catch (OperationCanceledException)
+            {
+                options.GuiConnection?.LogText?.Invoke("Przerwano zadanie");
+            }
+
             return (new List<int>(), rozw);
         }
 
