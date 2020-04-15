@@ -20,20 +20,20 @@ namespace FormsApp
     public partial class MainForm : Form
     {
         private List<Job> data;
-        private readonly Action<string, List<Job>, bool> logging;
+        private readonly Action<string> LogTextAction;
         private List<string> foundFiles = new List<string>();
         private string lastSearchedDirectory;
-        private readonly List<(Type, Type)> algorithms;
+        private readonly List<(Type methodType, Type methodOptionType)> algorithms;
         private IMethodOptions methodOptions;
 
         public MainForm()
         {
             InitializeComponent();
-            logging = Log;
+            LogTextAction = LogText;
             LoadFoundDataFiles(Program.AppSettings.ExamplesPath);
             algorithms = Solver.Utils.Helper.GetMethodAndOptionsTypes();
             AlgorithmChangeComboBox.Items.AddRange(algorithms
-                .Select(x => x.Item1.Name.Replace("Method", string.Empty)).ToArray());
+                .Select(x => x.methodType.Name.Replace("Method", string.Empty)).ToArray());
             AlgorithmChangeComboBox.SelectedIndex = 0;
             MaxLineLength = CalculateMaxLineLengthRichTextBox();
         }
@@ -42,102 +42,97 @@ namespace FormsApp
         private void InstructionsButton_Click(object sender, EventArgs e)
         {
             var readme = Loader.LoadFileFromAppDirectory(Program.AppSettings.ReadmeFileName);
-            Log(readme);
+            LogText(readme);
         }
 
-        delegate void LogCallback(string text, List<Job> jobs, bool withTimestamp = true);
+        delegate void LogGraphicsCallback(List<Job> jobs);
 
-        private void Log(string toLog, List<Job> jobs = null, bool withTimestamp = true)
+        private void LogGraphics(List<Job> jobs)
         {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
             if (LogRichTextBox.InvokeRequired)
             {
-                LogCallback d = new LogCallback(Log);
-                Invoke(d, new object[] { toLog, jobs, withTimestamp });
+                Invoke(new LogGraphicsCallback(LogGraphics), new object[] { jobs });
             }
             else
             {
-				string str = "";
-				if (withTimestamp)
-				{
-					str = $"{DateTime.UtcNow:HH:mm:ss.fff} : {str}";
-				}
-				if (jobs != null)
-				{
-					str = GetFormattedJobs(jobs);
-				}
-                if (!string.IsNullOrWhiteSpace(toLog))
-				{
-					str += toLog;
-				}
-				str += Environment.NewLine;
-				LogRichTextBox.AppendText(str);
+                LogRichTextBox.AppendText(GetFormattedJobs(jobs) + Environment.NewLine);
+            }
+        }
+
+        delegate void LogTextCallback(string text);
+
+        private void LogText(string text)
+        {
+            if (LogRichTextBox.InvokeRequired)
+            {
+                Invoke(new LogTextCallback(LogText), new object[] { text });
+            }
+            else
+            {
+                LogRichTextBox.AppendText($"{DateTime.UtcNow:HH:mm:ss.fff} : {text}" + Environment.NewLine);
             }
         }
 
         private void ClearLogButton_Click(object sender, EventArgs e) => LogRichTextBox.Clear();
 
+        private readonly int MaxLineLength;
 
-		private readonly int MaxLineLength;
+        private int CalculateMaxLineLengthRichTextBox()
+        {
+            Graphics g = LogRichTextBox.CreateGraphics();
+            float twoCharW = g.MeasureString("aa", LogRichTextBox.Font).Width;
+            float oneCharW = g.MeasureString("a", LogRichTextBox.Font).Width;
+            return (int)((float)LogRichTextBox.Width / (twoCharW - oneCharW));
+        }
 
-		private int CalculateMaxLineLengthRichTextBox()
-		{
-			Graphics g = LogRichTextBox.CreateGraphics();
-			float twoCharW = g.MeasureString("aa", LogRichTextBox.Font).Width;
-			float oneCharW = g.MeasureString("a", LogRichTextBox.Font).Width;
-			return (int)((float)LogRichTextBox.Width / (twoCharW - oneCharW));
-		}
+        private string GetFormattedJobs(List<Job> jobs)
+        {
+            StringBuilder sb = new StringBuilder();
+            var listOfDividedIndexes = DivideJobsForView(jobs);
+            foreach (var indexes in listOfDividedIndexes)
+            {
+                var jobInThisRange = jobs.GetRange(indexes.Item1, indexes.Item2 - indexes.Item1 + 1);
+                foreach (var job in jobInThisRange)
+                {
+                    sb.AppendFormat("\u250C{0}\u2510", new string('\u2500', job.Time));
+                }
+                sb.AppendLine();
+                foreach (var job in jobInThisRange)
+                {
+                    string infoToFit = $"{job.Index}\u2500{job.Weight}\u2500{job.Term}\u2500{job.Time}";
+                    while (infoToFit.Length > job.Time && infoToFit.Contains('\u2500'))
+                    {
+                        infoToFit = infoToFit.Remove(infoToFit.LastIndexOf('\u2500'));
+                    }
+                    sb.AppendFormat("\u2502{0}\u2502", infoToFit.Center(job.Time, '\u2500'));
+                }
+                sb.AppendLine();
+                foreach (var job in jobInThisRange)
+                {
+                    sb.AppendFormat("\u2514{0}\u2518", new string('\u2500', job.Time));
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
 
-		private string GetFormattedJobs(List<Job> jobs)
-		{
-			StringBuilder sb = new StringBuilder();
-			var listOfDividedIndexes = DivideJobsForView(jobs);
-			foreach (var indexes in listOfDividedIndexes)
-			{
-				var jobInThisRange = jobs.GetRange(indexes.Item1, indexes.Item2 - indexes.Item1 + 1);
-				foreach (var job in jobInThisRange)
-				{
-					sb.AppendFormat("\u250C{0}\u2510", new string('\u2500', job.Time));
-				}
-				sb.AppendLine();
-				foreach (var job in jobInThisRange)
-				{
-					string infoToFit = $"{job.Index}\u2500{job.Weight}\u2500{job.Term}\u2500{job.Time}";
-					while (infoToFit.Length > job.Time && infoToFit.Contains('\u2500'))
-					{
-						infoToFit = infoToFit.Remove(infoToFit.LastIndexOf('\u2500'));
-					}
-					sb.AppendFormat("\u2502{0}\u2502", infoToFit.Center(job.Time, '\u2500'));
-				}
-				sb.AppendLine();
-				foreach (var job in jobInThisRange)
-				{
-					sb.AppendFormat("\u2514{0}\u2518", new string('\u2500', job.Time));
-				}
-				sb.AppendLine();
-			}
-			return sb.ToString();
-		}
-
-		private List<(int, int)> DivideJobsForView(List<Job> jobs)
-		{
-			var list = new List<(int, int)>();
-			int countedLength = 0;
-			int startIndex = 0;
-			for (int i = 0; i < jobs.Count; i++)
-			{
-				countedLength += jobs[i].Time + 2;
-				if (countedLength >= MaxLineLength)
-				{
-					list.Add((startIndex, i - 1));
-					countedLength = jobs[i].Time;
-					startIndex = i;
-				}
-			}
-			list.Add((startIndex, jobs.Count - 1));
-			return list;
-		}
-	}
+        private List<(int, int)> DivideJobsForView(List<Job> jobs)
+        {
+            var list = new List<(int, int)>();
+            int countedLength = 0;
+            int startIndex = 0;
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                countedLength += jobs[i].Time + 2;
+                if (countedLength >= MaxLineLength)
+                {
+                    list.Add((startIndex, i - 1));
+                    countedLength = jobs[i].Time;
+                    startIndex = i;
+                }
+            }
+            list.Add((startIndex, jobs.Count - 1));
+            return list;
+        }
+    }
 }

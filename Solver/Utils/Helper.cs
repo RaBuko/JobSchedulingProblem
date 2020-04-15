@@ -16,7 +16,7 @@ namespace Solver.Utils
             var methods = types.Where(x => typeof(IMethod).IsAssignableFrom(x));
             var options = types.Where(x => typeof(IMethodOptions).IsAssignableFrom(x));
 
-            var methodOptionRelations = new List<(Type, Type)>();
+            var methodOptionRelations = new List<(Type method, Type methodOptions)>();
             foreach (var method in methods)
             {
                 string methodName = method.Name.Replace("Method", string.Empty);

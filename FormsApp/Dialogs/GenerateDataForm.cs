@@ -10,11 +10,11 @@ namespace FormsApp.Dialogs
     {
         public GeneratorOptions GeneratorOptions;
 
-        private readonly Action<string, List<Job>, bool> Logging;
+        private readonly Action<string> LogText;
 
-        public GenerateDataForm(Action<string, List<Job>, bool> loggingAction = null)
+        public GenerateDataForm(Action<string> loggingAction = null)
         {
-            Logging = loggingAction;
+            LogText = loggingAction;
             InitializeComponent();
         }
 
@@ -33,7 +33,7 @@ namespace FormsApp.Dialogs
                     MaxTime = int.Parse(MaxTimeTextBox.Text),
                     MaxWeight = int.Parse(MaxWeightTextBox.Text),
                 };
-                Logging?.Invoke($"Parametry generowania: {Loader.ParseToJsonString(GeneratorOptions)}", null, true);
+                LogText($"Parametry generowania: {Loader.ParseToJsonString(GeneratorOptions)}");
                 Visible = false;
             }
         }
@@ -42,7 +42,7 @@ namespace FormsApp.Dialogs
         {
             if (!int.TryParse(textBox.Text, out int result))
             {
-                Logging?.Invoke($"{type}: {textBox.Text} nie jest liczbą", null, true);
+                LogText($"{type}: {textBox.Text} nie jest liczbą");
                 return false;
             }
             return true;

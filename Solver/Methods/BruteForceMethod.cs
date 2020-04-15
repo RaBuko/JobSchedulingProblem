@@ -8,24 +8,20 @@ namespace Solver.Methods
 {
     public class BruteForceMethod : IMethod
     {
-        public IMethodOptions Prepare(IMethodOptions options)
-        {
-            if (options == null) options = new BruteForceOptions();
-            var bruteForceOptions = options as BruteForceOptions;
-            return bruteForceOptions;
-        }
+        public IMethodOptions Prepare(IMethodOptions options) => options as BruteForceOptions;
 
-        public (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch, GuiActions guiActions = null)
+        public (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch)
         {
             var data = options.Data;
             int time = 0;
             int penalty = 0;
             int minPenalty = int.MaxValue;
             int jobCount = data.Count;
-            int [] temp = data.Select(x => x.Index).ToArray();
-            int [] bestOrder = temp;
+            int[] temp = data.Select(x => x.Index).ToArray();
+            int[] bestOrder = temp;
+            string tolog;
 
-            guiActions?.Log?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n", null, true);
+            options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
             if (!stopwatch.IsRunning) stopwatch.Start();
 
             while (true)
@@ -33,27 +29,28 @@ namespace Solver.Methods
                 time = 0;
                 penalty = 0;
 
+                tolog = "";
                 for (int it = 0; it < jobCount; it++)
                 {
-                    guiActions?.Log?.Invoke(temp[it] + (it != jobCount - 1 ? ",": string.Empty), null, true);
+                    tolog += temp[it] + (it != jobCount - 1 ? "," : string.Empty);
                     time += data[temp[it]].Time;
                     penalty += data[temp[it]].CountPenalty(time);
                 }
 
-                guiActions?.Log?.Invoke($" | Wynik = {penalty}", null, true);
+                tolog += $" | Wynik = {penalty}";
 
                 if (minPenalty > penalty)
                 {
-                    guiActions?.Log?.Invoke(" < BEST", null, true);
+                    tolog += " < BEST";
                     minPenalty = penalty;
-                    bestOrder = (int [])temp.Clone();
+                    bestOrder = (int[])temp.Clone();
                 }
 
-                guiActions?.Log?.Invoke("\n", null, true);
+                options.GuiConnection?.LogText?.Invoke(tolog);
 
                 int i = jobCount - 1;
                 while (i > 0 && temp[i - 1] >= temp[i]) { i--; }
-                    
+
 
                 if (i == 0)
                 {
@@ -67,8 +64,6 @@ namespace Solver.Methods
                 temp.ReverseSubarray(i, jobCount - 1);
 
             }
-            if (stopwatch.IsRunning) stopwatch.Stop();
-            guiActions?.Log?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n", null, true );
             return (bestOrder.ToList(), minPenalty);
         }
     }

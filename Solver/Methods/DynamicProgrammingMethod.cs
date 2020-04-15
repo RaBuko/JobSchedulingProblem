@@ -11,7 +11,6 @@ namespace Solver.Methods
     {
         public IMethodOptions Prepare(IMethodOptions methodOptions)
         {
-            if (methodOptions == null) methodOptions = new DynamicProgrammingOptions();
             var subsets = new Dictionary<string, int>
             {
                 [0.IntToBin(methodOptions.Data.Count)] = 0
@@ -21,13 +20,12 @@ namespace Solver.Methods
             {
                 subsets[i.IntToBin(methodOptions.Data.Count)] = int.MaxValue;
             }
-
-            var dynamicProgrammingOptions = methodOptions as DynamicProgrammingOptions;
-            dynamicProgrammingOptions.Subsets = subsets;
-            return dynamicProgrammingOptions;
+            var dynamicMethodOptions = methodOptions as DynamicProgrammingOptions;
+            dynamicMethodOptions.Subsets = subsets;
+            return dynamicMethodOptions;
         }
 
-        public (List<int>, int) Solve(IMethodOptions options, Stopwatch stopwatch, GuiActions guiActions = null)
+        public (List<int>, int) Solve(IMethodOptions options, Stopwatch stopwatch)
         {
             DynamicProgrammingOptions dpaOptions = options as DynamicProgrammingOptions;
             var jobs = dpaOptions.Data;
@@ -40,15 +38,15 @@ namespace Solver.Methods
             int opt = 0;
             string tmp = string.Empty;
 
+            options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
 
-            guiActions?.Log?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}\n", null, true);
             if (!stopwatch.IsRunning) stopwatch.Start();
             for (int i = 1; i < dpaOptions.Subsets.Count; i++)
             {
                 tmp = i.IntToBin(jobs.Count);
                 rozw = int.MaxValue;
                 cmax = 0;
-                guiActions?.Log?.Invoke($"OPT({tmp}):\n", null, true);
+                options.GuiConnection?.LogText?.Invoke($"OPT({tmp}):");
 
                 for (int j = 0; j < tmp.Length; j++)
                 {
@@ -58,7 +56,7 @@ namespace Solver.Methods
                     }
                 }
 
-                guiActions?.Log?.Invoke($"\tCMAX : {cmax}\n", null, true);
+                options.GuiConnection?.LogText?.Invoke($"\tCMAX : {cmax}");
 
                 for (int j = 0; j < tmp.Length; j++)
                 {
@@ -68,18 +66,14 @@ namespace Solver.Methods
                         tmp = tmp.ReplaceAt(j, '0');
                         opt = jobs[index].CountPenalty(cmax);
                         result = subsets[tmp] + opt; // OPT(xn,..,xi+1,xi-1,..,x0) + wx*Tx 
-                        guiActions?.Log?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}\n", null, true);
+                        options.GuiConnection?.LogText?.Invoke($"\tOPT({tmp}) + w{index}T{index} = {subsets[tmp]} + {opt} = {result}");
                         rozw = Math.Min(rozw, result); // wybranie najmniejszego kosztu dla danego i
                         tmp = i.IntToBin(jobs.Count);
                     }
                 }
-                guiActions?.Log?.Invoke("", GetAllIndexes(tmp, jobs), false);
+                options.GuiConnection?.LogGraphics?.Invoke(GetAllIndexes(tmp, jobs));
                 subsets[tmp] = rozw;
             }
-
-            if (stopwatch.IsRunning) stopwatch.Stop();
-            guiActions?.Log?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}\n", null, true);
-
             return (new List<int>(), rozw);
         }
 

@@ -100,10 +100,10 @@ namespace FormsApp.Helpers
 
         }
 
-        internal static List<string> SearchDirectoryForJobsFiles(string directoryPath, Action<string, List<Job>, bool> logging)
+        internal static List<string> SearchDirectoryForJobsFiles(string directoryPath, Action<string> LogText)
         {
             List<string> foundFiles = new List<string>();
-            logging?.Invoke($"Przeszukiwany folder: {directoryPath}", null, true);
+            LogText($"Przeszukiwany folder: {directoryPath}");
             foreach (var file in Directory.GetFiles(directoryPath))
             {
                 try
@@ -112,18 +112,18 @@ namespace FormsApp.Helpers
                 }
                 catch (InvalidDataException)
                 {
-                    logging?.Invoke($"{Path.GetFileName(file)} nie ma właściwego formatu zadań", null, true);
+                    LogText($"{Path.GetFileName(file)} nie ma właściwego formatu zadań");
                     continue;
                 }
                 catch (Exception)
                 {
-                    logging?.Invoke($"Plik {Path.GetFileName(file)} jest niepoprawny", null, true);
+                    LogText($"Plik {Path.GetFileName(file)} jest niepoprawny");
                     continue;
                 }
 
                 foundFiles.Add(file);
             }
-            logging?.Invoke($"Znaleziono plików: {foundFiles.Count()}", null, true);
+            LogText($"Znaleziono plików: {foundFiles.Count()}");
             return foundFiles;
         }
 
