@@ -73,7 +73,7 @@ namespace Solver.Methods
                             tmp = i.IntToBin(jobs.Count);
                         }
                     }
-                    options.GuiConnection?.LogGraphics?.Invoke(GetAllIndexes(tmp, jobs));
+                    options.GuiConnection?.LogGraphics?.Invoke(jobs.JobsFromBitString(tmp));
                     subsets[tmp] = rozw;
                     options.CancellationToken.ThrowIfCancellationRequested();
                 }
@@ -84,16 +84,6 @@ namespace Solver.Methods
             }
 
             return (new List<int>(), rozw);
-        }
-
-        private List<Job> GetAllIndexes(string s, List<Job> allJobs)
-        {
-            var chosenJobs = new List<Job>();
-            for (int i = s.IndexOf('1'); i > -1; i = s.IndexOf('1', i + 1))
-            {
-                chosenJobs.Add(allJobs[i]);
-            }
-            return chosenJobs;
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using FormsApp.Dialogs;
-using FormsApp.Helpers;
+﻿using FormsApp.Helpers;
 using Solver.Data;
 using Solver.Methods;
+using Solver.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +23,6 @@ namespace FormsApp
             {
                 LogText("Rozpoczęto bezpieczne przerwanie rozwiązywania");
                 CancellationTokenSource.Cancel();
-                SwitchUIMode();
                 return;
             }
 
@@ -46,8 +46,12 @@ namespace FormsApp
             LogText($"Koniec : {DateTime.Now:HH:mm:ss.fff}");
             LogText($"Upłynęło : {stopwatch.Elapsed:hh\\:mm\\:ss\\.fffffff}");
 
-            LogTextAction.Invoke($"Najlepsze ułożenie:");
-            LogGraphics(Solver.Utils.IntManip.JobsFromIndexList(results.bestOrder, data));
+            if (results.bestOrder.Any())
+            {
+                LogTextAction.Invoke($"Najlepsze ułożenie:");
+                LogGraphics(data.JobsFromIndexList(results.bestOrder));
+            }
+
             LogText($"Najmniejsze znalezione opóźnienie: {results.minimizedTardiness}");
 
             if (Loader.TrySaveNewBest(LoadedFile, results.minimizedTardiness))

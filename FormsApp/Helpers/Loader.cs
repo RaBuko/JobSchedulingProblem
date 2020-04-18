@@ -133,7 +133,7 @@ namespace FormsApp.Helpers
             if (!string.IsNullOrWhiteSpace(fileName))
             {
                 var foundBest = FindBest(fileName);
-                save = foundBest.Contains("-") || int.Parse(foundBest) < newBest;
+                save = foundBest.Contains("-") || int.Parse(foundBest) > newBest;
             }
             else
             {
