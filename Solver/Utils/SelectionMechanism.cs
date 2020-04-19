@@ -21,6 +21,7 @@ namespace Solver.Utils
                 if (p <= 0) break;
                 p -= chromosomes[iter].fitness;
             }
+            if (iter >= chromosomes.Count) iter = chromosomes.Count - 1; //safeguard, if precision exceeded chromosome count in result
             return iter;
         }
     }

@@ -22,64 +22,61 @@ namespace Solver.Methods
             return dynamicMethodOptions;
         }
 
-        public (List<int>, int) Solve(IMethodOptions options, Stopwatch stopwatch)
+        public (List<int>, int) Solve(IMethodOptions imethodoptions, Stopwatch stopwatch)
         {
-            var methodsOptions = options as GeneticAlgorithmOptions;
+            var options = imethodoptions as GeneticAlgorithmOptions;
 
             var minTardiness = int.MaxValue;
-            var population = methodsOptions.StartingPopulation;
-            (List<int> jobOrder, double fitness) bestGlobalOrder = (population[0]);
             List<int> indexes;
+            (List<int> jobOrder, double fitness) bestGlobalOrder = (options.Data.Select(x => x.Index).ToList(), 0);
 
-            methodsOptions.GuiConnection?.LogText?.Invoke($"PARAMETRY:");
-            foreach ((PropertyInfo prop, string value) in Helper.GetParametersValues(methodsOptions))
+            options.GuiConnection?.LogText?.Invoke($"PARAMETRY:");
+            foreach ((PropertyInfo prop, string value) in Helper.GetParametersValues(options))
             {
-                methodsOptions.GuiConnection?.LogText?.Invoke($"{prop.Name} : {value}");
+                options.GuiConnection?.LogText?.Invoke($"{prop.Name} : {value}");
             }
 
-            int oldPopCount = (int)(population.Count * (1 - methodsOptions.CrossoverRate));
-            methodsOptions.GuiConnection?.LogText?.Invoke($"W nowej populacji pozostanie {oldPopCount} osobnikow z poprzedniej generacji (CrossoverRate)");
+            int oldPopCount = (int)(options.ChromosomeCount * (1 - options.CrossoverRate));
+            options.GuiConnection?.LogText?.Invoke($"W nowej populacji pozostanie {oldPopCount} osobnikow z poprzedniej generacji (CrossoverRate)");
 
-            int mutatePopCount = (int)(population.Count * methodsOptions.MutationRate);
-            methodsOptions.GuiConnection?.LogText?.Invoke($"W każdej iteracji {oldPopCount} osobnikow przejdzie mutacje (MutationRate)");
+            int mutatePopCount = (int)(options.ChromosomeCount * options.MutationRate);
+            options.GuiConnection?.LogText?.Invoke($"W każdej iteracji {oldPopCount} osobnikow przejdzie mutacje (MutationRate)");
 
-            methodsOptions.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
+            options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
             stopwatch.Start();
-
             try
             {
-                methodsOptions.GuiConnection?.LogText?.Invoke("Generowanie populacji startowej");
-                population = GenerateStartingPopulation(methodsOptions.Data, methodsOptions.ChromosomeCount);
+                options.GuiConnection?.LogText?.Invoke("Generowanie populacji startowej");
+                var population = GenerateStartingPopulation(options.Data, options.ChromosomeCount);
 
-                methodsOptions.GuiConnection?.LogText?.Invoke("Obliczenie funkcji celu dla populacji startowej");
-                ComputeFitness(population, methodsOptions.Data);
+                options.GuiConnection?.LogText?.Invoke("Obliczenie funkcji celu dla populacji startowej");
+                bestGlobalOrder = ComputeFitness(population, options.Data);
 
-                while (methodsOptions.NumberOfIterations > 0)
+                while (options.NumberOfIterations > 0)
                 {
-                    methodsOptions.GuiConnection?.LogText?.Invoke($"Iteracja: {methodsOptions.NumberOfIterations}, generowanie nowej populacji");
-                    population = GenerateNewPopulation(population, methodsOptions, oldPopCount);
+                    options.GuiConnection?.LogText?.Invoke($"Iteracja: {options.NumberOfIterations}, generowanie nowej populacji");
+                    population = GenerateNewPopulation(population, options, oldPopCount);
 
                     indexes = ThreadSafeRandom.GenerateUniqueRandom(mutatePopCount, 0, population.Count);
-                    methodsOptions.GuiConnection?.LogText?.Invoke($"Mutują: {string.Join(',', indexes)}");
+                    options.GuiConnection?.LogText?.Invoke($"Mutują: {string.Join(',', indexes)}");
                     foreach (var i in indexes)
                     {
                         Mutate(population[i].jobsOrder);
                     }
 
-                    if (methodsOptions.GuiConnection?.LogText != null)
-                    {
-                        bestGlobalOrder = population.Find(y => y.fitness == population.Max(x => x.fitness));
-                        methodsOptions.GuiConnection?.LogText?.Invoke($"Najlepszy wynik funkcji celu = {bestGlobalOrder.fitness}");
-                    }
 
-                    methodsOptions.NumberOfIterations -= 1;
+                    bestGlobalOrder = ComputeFitness(population, options.Data);
+                    options.GuiConnection?.LogText?.Invoke($"Najlepszy wynik funkcji celu = {bestGlobalOrder.fitness}");
+
+                    options.NumberOfIterations -= 1;
                 }
             }
             catch (OperationCanceledException)
             {
-                options.GuiConnection?.LogText("Przerwano wykonwanie zadania");
+                imethodoptions.GuiConnection?.LogText("Przerwano wykonwanie zadania");
             }
 
+            minTardiness = options.Data.JobsFromIndexList(bestGlobalOrder.jobOrder).CountPenalty();
             return (bestGlobalOrder.jobOrder, minTardiness);
         }
 
@@ -97,12 +94,18 @@ namespace Solver.Methods
             return startingPopulation;
         }
 
-        void ComputeFitness(List<(List<int> jobsOrder, double fitness)> population, List<Job> jobs)
+        (List<int> jobsOrder, double fitness) ComputeFitness(List<(List<int> jobsOrder, double fitness)> population, List<Job> jobs)
         {
+            (List<int> jobsOrder, double fitness) bestFitness = population[0];
             for (int i = 0; i < population.Count; i++)
             {
                 population[i] = (population[i].jobsOrder, CalculateFitness(population[i].jobsOrder, jobs));
+                if (bestFitness.fitness < population[i].fitness)
+                {
+                    bestFitness = population[i];
+                }
             }
+            return bestFitness;
         }
 
         private List<(List<int> jobsOrder, double fitness)> GenerateNewPopulation(List<(List<int> jobsOrder, double fitness)> population, GeneticAlgorithmOptions options, int oldPopCount)
@@ -128,7 +131,7 @@ namespace Solver.Methods
                 parent2 = population[parent2Index].jobsOrder;
                 newPopulation.Add((CreateOffspring(parent1, parent2), 0));
                 parentStays = ThreadSafeRandom.ThisThreadsRandom.NextDouble() < 0.5 ? parent1 : parent2;
-                options.GuiConnection?.LogText?.Invoke($"Nowy osobnik, zostaje rodzic: {parentStays}");
+                options.GuiConnection?.LogText?.Invoke($"Nowy osobnik, zostaje rodzic: {string.Join(',', parentStays)}");
                 newPopulation.Add((parentStays, 0));
             }
 
@@ -146,18 +149,22 @@ namespace Solver.Methods
 
         private List<int> CreateOffspring(List<int> parent1, List<int> parent2) // based on Hamidreza Haddad and Mohammadreza Nematollahi solution
         {
-            var offspring = new List<int>();
-            for (int i = 0; i < parent1.Count; i++)
+            var offspring = new HashSet<int>();
+
+            while (offspring.Count < parent1.Count)
             {
-                offspring.Add(ThreadSafeRandom.ThisThreadsRandom.NextDouble() < 0.5 ? parent1[i] : parent2[i]);
+                for (int i = 0; i < parent1.Count; i++)
+                {
+                    offspring.Add(ThreadSafeRandom.ThisThreadsRandom.NextDouble() > 0.5 ? parent1[i] : parent2[i]);
+                }
             }
-            return offspring;
+            return offspring.ToList();
         }
 
 
         private double CalculateFitness(List<int> indexes, List<Job> data)
         {
-            return 1 / data.JobsFromIndexList(indexes).CountPenalty(); // fi = 1 / sum(WiTi) - fitness func
+            return 1 / (double)data.JobsFromIndexList(indexes).CountPenalty(); // fi = 1 / sum(WiTi) - fitness func
         }
     }
 }

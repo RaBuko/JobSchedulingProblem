@@ -33,9 +33,7 @@ namespace FormsApp
         {
             this.MainGroupBox = new System.Windows.Forms.GroupBox();
             this.ParametersGroupBox = new System.Windows.Forms.GroupBox();
-            this.ParametersFlowLayountPanel = new System.Windows.Forms.FlowLayoutPanel();
-            this.DetailsTextLogCheckBox = new System.Windows.Forms.CheckBox();
-            this.GraphicLogCheckBox = new System.Windows.Forms.CheckBox();
+            this.ParametersDataGridView = new System.Windows.Forms.DataGridView();
             this.LoadDataGroupBox = new System.Windows.Forms.GroupBox();
             this.FoundDataFilesListBox = new System.Windows.Forms.ListBox();
             this.SearchFolderButton = new System.Windows.Forms.Button();
@@ -59,7 +57,7 @@ namespace FormsApp
             this.LogRichTextBox = new System.Windows.Forms.RichTextBox();
             this.MainGroupBox.SuspendLayout();
             this.ParametersGroupBox.SuspendLayout();
-            this.ParametersFlowLayountPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ParametersDataGridView)).BeginInit();
             this.LoadDataGroupBox.SuspendLayout();
             this.InfoGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -83,7 +81,7 @@ namespace FormsApp
             // 
             // ParametersGroupBox
             // 
-            this.ParametersGroupBox.Controls.Add(this.ParametersFlowLayountPanel);
+            this.ParametersGroupBox.Controls.Add(this.ParametersDataGridView);
             this.ParametersGroupBox.Location = new System.Drawing.Point(6, 140);
             this.ParametersGroupBox.Name = "ParametersGroupBox";
             this.ParametersGroupBox.Size = new System.Drawing.Size(223, 153);
@@ -91,34 +89,18 @@ namespace FormsApp
             this.ParametersGroupBox.TabStop = false;
             this.ParametersGroupBox.Text = "Parametry";
             // 
-            // ParametersFlowLayountPanel
+            // ParametersDataGridView
             // 
-            this.ParametersFlowLayountPanel.Controls.Add(this.DetailsTextLogCheckBox);
-            this.ParametersFlowLayountPanel.Controls.Add(this.GraphicLogCheckBox);
-            this.ParametersFlowLayountPanel.Location = new System.Drawing.Point(10, 22);
-            this.ParametersFlowLayountPanel.Name = "ParametersFlowLayountPanel";
-            this.ParametersFlowLayountPanel.Size = new System.Drawing.Size(207, 125);
-            this.ParametersFlowLayountPanel.TabIndex = 0;
-            // 
-            // DetailsTextLogCheckBox
-            // 
-            this.DetailsTextLogCheckBox.AutoSize = true;
-            this.DetailsTextLogCheckBox.Location = new System.Drawing.Point(3, 3);
-            this.DetailsTextLogCheckBox.Name = "DetailsTextLogCheckBox";
-            this.DetailsTextLogCheckBox.Size = new System.Drawing.Size(109, 19);
-            this.DetailsTextLogCheckBox.TabIndex = 0;
-            this.DetailsTextLogCheckBox.Text = "Loguj szczegóły";
-            this.DetailsTextLogCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // GraphicLogCheckBox
-            // 
-            this.GraphicLogCheckBox.AutoSize = true;
-            this.GraphicLogCheckBox.Location = new System.Drawing.Point(3, 28);
-            this.GraphicLogCheckBox.Name = "GraphicLogCheckBox";
-            this.GraphicLogCheckBox.Size = new System.Drawing.Size(154, 19);
-            this.GraphicLogCheckBox.TabIndex = 1;
-            this.GraphicLogCheckBox.Text = "Pokaż zadania graficznie";
-            this.GraphicLogCheckBox.UseVisualStyleBackColor = true;
+            this.ParametersDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ParametersDataGridView.Location = new System.Drawing.Point(10, 20);
+            //this.ParametersDataGridView.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ParametersDataGridView.Name = "ParametersDataGridView";
+            this.ParametersDataGridView.Size = new System.Drawing.Size(207, 120);
+            this.ParametersDataGridView.TabIndex = 0;
+            this.ParametersDataGridView.RowHeadersVisible = false;
+            this.ParametersDataGridView.AllowUserToDeleteRows = false;
+            this.ParametersDataGridView.AutoGenerateColumns = false;
+            this.ParametersDataGridView.AllowUserToAddRows = false;
             // 
             // LoadDataGroupBox
             // 
@@ -320,6 +302,7 @@ namespace FormsApp
             this.AlgorithmChangeComboBox.Name = "AlgorithmChangeComboBox";
             this.AlgorithmChangeComboBox.Size = new System.Drawing.Size(157, 23);
             this.AlgorithmChangeComboBox.TabIndex = 4;
+            this.AlgorithmChangeComboBox.SelectedIndexChanged += new System.EventHandler(this.AlgorithmChangeComboBox_SelectedIndexChanged);
             // 
             // LogRichTextBox
             // 
@@ -343,8 +326,7 @@ namespace FormsApp
             this.MainGroupBox.ResumeLayout(false);
             this.MainGroupBox.PerformLayout();
             this.ParametersGroupBox.ResumeLayout(false);
-            this.ParametersFlowLayountPanel.ResumeLayout(false);
-            this.ParametersFlowLayountPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ParametersDataGridView)).EndInit();
             this.LoadDataGroupBox.ResumeLayout(false);
             this.InfoGroupBox.ResumeLayout(false);
             this.InfoGroupBox.PerformLayout();
@@ -384,9 +366,7 @@ namespace FormsApp
         private Label FileNameInfoLabel;
         private GroupBox InfoGroupBox;
         private GroupBox ParametersGroupBox;
-        private FlowLayoutPanel ParametersFlowLayountPanel;
-        private CheckBox DetailsTextLogCheckBox;
-        private CheckBox GraphicLogCheckBox;
+        private DataGridView ParametersDataGridView;
     }
 }
 

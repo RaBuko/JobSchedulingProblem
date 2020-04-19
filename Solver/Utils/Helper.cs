@@ -40,7 +40,10 @@ namespace Solver.Utils
             foreach (var prop in typeof(T).GetProperties())
             {
                 var value = prop.GetValue(options);
-                if (!(value is ICollection)) toReturn.Add((prop, value.ToString()));
+                if (prop.PropertyType.GetInterface(nameof(IEnumerable)) == null)
+                {
+                    toReturn.Add((prop, value.ToString()));
+                }
             }
             return toReturn;
         }

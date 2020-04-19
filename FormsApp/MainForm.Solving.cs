@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 
 namespace FormsApp
 {
@@ -19,6 +21,11 @@ namespace FormsApp
 
         private async void SolveButton_Click(object sender, EventArgs e)
         {
+            if (data == null)
+            {
+                LogText("Nie załadowano lub nie wygenerowano żadnej instancji testowej");
+            }
+
             if (SolveTask?.Status == TaskStatus.Running)
             {
                 LogText("Rozpoczęto bezpieczne przerwanie rozwiązywania");
@@ -68,14 +75,35 @@ namespace FormsApp
 
             methodOptions = Activator.CreateInstance(methodOptionType) as IMethodOptions;
             methodOptions.Data = data;
+
+            var userDefinedOptions = methodOptionType.GetProperties().Where(x => x.GetCustomAttribute(typeof(UserDefined)) != null).ToList();
+
             var guiConnection = new GuiConnection();
-            if (GraphicLogCheckBox.Checked)
+
+            foreach (var option in userDefinedOptions)
             {
-                guiConnection.LogGraphics = LogGraphics;
-            }
-            if (DetailsTextLogCheckBox.Checked)
-            {
-                guiConnection.LogText = LogText;
+                var userDefined = option.GetCustomAttribute(typeof(UserDefined)) as UserDefined;
+                var value = FindValueInDataGridView(userDefined.ParameterFormalName);
+                if (option.Name.Equals("ShouldLogText") && (bool)value)
+                {
+                    guiConnection.LogText = LogText;
+                }
+                if (option.Name.Equals("ShouldLogGraphics") && (bool)value)
+                {
+                    guiConnection.LogGraphics = LogGraphics;
+                }
+                if (option.PropertyType.IsEnum)
+                {
+                    value = Enum.Parse(userDefined.Type, value.ToString());
+                }
+                else
+                {
+                    if (value.GetType() != option.PropertyType)
+                    {
+                        value = Convert.ChangeType(value, option.PropertyType);
+                    }
+                    option.SetValue(methodOptions, value);
+                }
             }
 
             methodOptions.GuiConnection = guiConnection;
@@ -84,6 +112,19 @@ namespace FormsApp
             methodOptions = method.Prepare(methodOptions);
 
             return (method, methodOptions);
+        }
+
+        private object FindValueInDataGridView(string searchParameterName)
+        {
+            object value = null;
+            foreach (DataGridViewRow row in ParametersDataGridView.Rows)
+            {
+                if (row.Cells[0].Value.ToString().Equals(searchParameterName))
+                {
+                    value = row.Cells[1].Value;
+                }
+            }
+            return value;
         }
 
         private void SwitchUIMode()

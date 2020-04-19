@@ -1,19 +1,14 @@
-﻿using FormsApp.Dialogs;
-using FormsApp.Helpers;
+﻿using FormsApp.Helpers;
 using Solver.Data;
 using Solver.Methods;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Text;
+using Solver.Utils;
+using System.Reflection;
 
 namespace FormsApp
 {
@@ -133,6 +128,49 @@ namespace FormsApp
             }
             list.Add((startIndex, jobs.Count - 1));
             return list;
+        }
+
+        private void AlgorithmChangeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var methodOptionType = algorithms.Find(x => x.methodType.Name.Contains(AlgorithmChangeComboBox.SelectedItem.ToString())).methodOptionType;
+            var userDefinedOptions = methodOptionType.GetProperties().Where(x => x.GetCustomAttribute(typeof(UserDefined)) != null).ToList();
+
+            if (!ParametersDataGridView.Columns.Contains("ParameterName"))
+            {
+                ParametersDataGridView.Columns[ParametersDataGridView.Columns.Add("ParameterName", "Parametr")].ReadOnly = true;
+            }
+
+            if (!ParametersDataGridView.Columns.Contains("Value"))
+            {
+                ParametersDataGridView.Columns.Add("Value", "Wartość");
+            }
+
+            ParametersDataGridView.Rows.Clear();
+            List<(string name, string value)> parameters = new List<(string name, string value)>();
+            for (int i = 0; i < userDefinedOptions.Count(); i++)
+            {
+                var param = userDefinedOptions[i].GetCustomAttribute(typeof(UserDefined)) as UserDefined;
+                var index = ParametersDataGridView.Rows.Add(param.ParameterFormalName, null);
+                if (param.Type == typeof(bool))
+                {
+                    var checkBoxCell = new DataGridViewCheckBoxCell();
+                    checkBoxCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    ParametersDataGridView[1, index] = checkBoxCell;
+                    ParametersDataGridView[1, index].Value = param.DefaultValue;
+                }
+                else if (param.Type.IsEnum)
+                {
+                    var comboBox = new DataGridViewComboBoxCell();
+                    var names = Enum.GetNames(param.Type);
+                    comboBox.Items.AddRange(names);
+                    comboBox.Value = names[0];
+                    ParametersDataGridView[1, index] = comboBox;
+                }
+                else
+                {
+                    ParametersDataGridView[1, index].Value = param.DefaultValue;
+                }
+            }
         }
     }
 }

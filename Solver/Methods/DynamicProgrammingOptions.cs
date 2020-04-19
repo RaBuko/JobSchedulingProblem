@@ -14,5 +14,11 @@ namespace Solver.Methods
         public CancellationToken CancellationToken { get; set; }
 
         public Dictionary<string, int> Subsets { get; set; }
+
+        [UserDefined("Pokaż szczegóły", typeof(bool), true)]
+        public bool ShouldLogText { get; set; }
+
+        [UserDefined("Pokaż zadania graficznie", typeof(bool), true)]
+        public bool ShouldLogGraphics { get; set; }
     }
 }
