@@ -4,6 +4,7 @@ using System.Text;
 using System.Reflection;
 using System.Linq;
 using Solver.Methods;
+using System.Collections;
 
 namespace Solver.Utils
 {
@@ -31,6 +32,17 @@ namespace Solver.Utils
                   .Where(t => string.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
                   .Where(t => !t.IsInterface)
                   .ToArray();
+        }
+
+        public static List<(PropertyInfo, string)> GetParametersValues<T>(T options) where T : IMethodOptions
+        {
+            var toReturn = new List<(PropertyInfo, string)>(); 
+            foreach (var prop in typeof(T).GetProperties())
+            {
+                var value = prop.GetValue(options);
+                if (!(value is ICollection)) toReturn.Add((prop, value.ToString()));
+            }
+            return toReturn;
         }
     }
 }

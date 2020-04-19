@@ -1,7 +1,7 @@
 ﻿using Solver.Data;
+using Solver.Utils;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Solver.Methods
@@ -12,17 +12,11 @@ namespace Solver.Methods
         public GuiConnection GuiConnection { get; set; }
         public CancellationToken CancellationToken { get; set; }
         public int NumberOfIterations { get; set; }
-        public SelectionMechanism SelectionMechanism { get; set; }
-        public decimal MutationRate { get; set; }
-        public decimal CrossoverRate { get; set; }
+        public SelectionMechanismEnum SelectionMechanism { get; set; }
+        public double MutationRate { get; set; }
+        public double CrossoverRate { get; set; }
         public int ChromosomeCount { get; set; }
-        public List<List<int>> StartingPopulation { get; set; }
-    }
-
-    enum SelectionMechanism
-    {
-        RouletteWheel = 0,
-        BestSelection = 1,
-        RandomSelection = 2,
+        public List<(List<int> jobsOrder, double fitness)> StartingPopulation { get; set; }
+        public Func<List<(List<int> jobsOrder, double fitness)>, int> SelectionMechanismAction { get; set; }
     }
 }

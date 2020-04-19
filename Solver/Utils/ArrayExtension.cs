@@ -32,15 +32,12 @@ namespace Solver.Utils
                 list[n] = value;
             }
         }
-    }
 
-    public static class ThreadSafeRandom
-    {
-        [ThreadStatic] private static Random Local;
-
-        public static Random ThisThreadsRandom
+        public static void Swap<T>(ref T lhs, ref T rhs)
         {
-            get { return Local ??= new Random(unchecked((Environment.TickCount * 31) + Thread.CurrentThread.ManagedThreadId)); }
+            T temp = lhs;
+            lhs = rhs;
+            rhs = temp;
         }
     }
 
