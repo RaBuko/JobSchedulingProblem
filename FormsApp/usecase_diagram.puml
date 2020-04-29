@@ -1,0 +1,35 @@
+@startuml
+left to right direction
+
+actor Użytkownik as user
+
+(Wygeneruj instancję\nproblemu) as gen
+(Dostosuj parametry\ngenerowania) as gen_params
+(Zapisz wygenerowaną\ninstancje problemu\ndo pliku) as save
+(Załaduj dane\ndo pamięci) as load_data
+(Przeszukaj folder w\nposzukiwaniu plików z\ninstancjami problemu) as search
+(Wybór folderu) as choose_dir
+(Wczytaj plik) as load_file
+(Wybierz algorytm) as choose_alg
+(Dostosuj parametry\nalgorytmu) as adjust_alg_params
+(Rozwiąż załadowaną\ninstancję problemu\nwybranym algorytmem) as solve
+(Wyświetl instrukcję) as instr
+
+user -- gen 
+gen <|-- save : extends
+gen .> gen_params : include
+gen <|-- load_data : extends
+
+user -- search
+search .> choose_dir : include
+search <|-- load_file : extends
+load_file <|-- load_data : extends
+
+user -- choose_alg
+choose_alg <|-- adjust_alg_params : extends
+solve .> choose_alg : include
+solve .> adjust_alg_params : include 
+solve .> load_data
+
+user -- instr
+@enduml

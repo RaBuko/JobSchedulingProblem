@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace FormsApp.Helpers
 {
-    internal class Loader
+    public class Loader
     {
         /// <summary>
         /// Loads jobs from specified file. Each file contains the data listed 
@@ -17,7 +17,7 @@ namespace FormsApp.Helpers
         /// </summary>
         /// <param name="path">Path to file</param>
         /// <returns>Set of parsed jobs</returns>
-        internal static List<Job> LoadJobsFromFile(string path)
+        public static List<Job> LoadJobsFromFile(string path)
         {
             var list = new List<Job>();
             var file = File.ReadAllText(path, Encoding.ASCII).Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -43,7 +43,7 @@ namespace FormsApp.Helpers
             return list;
         }
 
-        internal static void WriteJobsToFile(string path, List<Job> jobs)
+        public static void WriteJobsToFile(string path, List<Job> jobs)
         {
             var sb = new StringBuilder();
 
@@ -66,9 +66,9 @@ namespace FormsApp.Helpers
         }
 
         #region JSON
-        internal static AppSettings LoadAppSettings() => LoadJson<AppSettings>(LoadFileFromAppDirectory("appsettings.json"));
+        public static AppSettings LoadAppSettings() => LoadJson<AppSettings>(LoadFileFromAppDirectory("appsettings.json"));
 
-        private static T LoadJson<T>(string filePath) where T : class => JsonConvert.DeserializeObject<T>(filePath);
+        public static T LoadJson<T>(string value) where T : class => JsonConvert.DeserializeObject<T>(value);
 
         internal static string ParseToJsonString(object obj) => JsonConvert.SerializeObject(obj, Formatting.Indented);
 
@@ -78,16 +78,16 @@ namespace FormsApp.Helpers
 
         internal static string[] FindExampleData(string relativePath) => Directory.GetFiles(GetExampleDataPath(relativePath));
 
-        internal static string LoadFileFromAppDirectory(string fileName)
+        public static string LoadFileFromAppDirectory(string fileName)
         {
             var path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             if (!File.Exists(path)) throw new Exception($"{path} does not exists");
             return File.ReadAllText(path);
         }
 
-        internal static string FindBest(string fileName)
+        public static string FindBest(string fileName, string solvedFile = null)
         {
-            var dict = LoadJson<Dictionary<string, string>>(LoadFileFromAppDirectory(Program.AppSettings.SolvedDictFileName));
+            var dict = LoadJson<Dictionary<string, string>>(LoadFileFromAppDirectory(solvedFile ?? Program.AppSettings.SolvedDictFileName));
             fileName = Path.GetFileNameWithoutExtension(fileName);
             try
             {
@@ -100,7 +100,7 @@ namespace FormsApp.Helpers
 
         }
 
-        internal static List<string> SearchDirectoryForJobsFiles(string directoryPath, Action<string> LogText)
+        public static List<string> SearchDirectoryForJobsFiles(string directoryPath, Action<string> LogText)
         {
             List<string> foundFiles = new List<string>();
             LogText($"Przeszukiwany folder: {directoryPath}");

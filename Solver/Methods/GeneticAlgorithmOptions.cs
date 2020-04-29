@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Solver.Methods
 {
-    class GeneticAlgorithmOptions : IMethodOptions
+    public class GeneticAlgorithmOptions : IMethodOptions
     {
         public List<Job> Data { get; set; }
         public GuiConnection GuiConnection { get; set; }

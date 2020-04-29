@@ -10,12 +10,12 @@ namespace Solver.Methods
     {
         public IMethodOptions Prepare(IMethodOptions options) => options as BruteForceOptions;
 
-        public (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch)
+        public (List<int> jobOrder, int minTardiness) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch)
         {
             var data = options.Data;
             int time = 0;
             int penalty = 0;
-            int minPenalty = int.MaxValue;
+            int minTardiness = int.MaxValue;
             int jobCount = data.Count;
             int[] temp = data.Select(x => x.Index).ToArray();
             int[] bestOrder = temp;
@@ -41,10 +41,10 @@ namespace Solver.Methods
 
                     tolog += $" | Wynik = {penalty}";
 
-                    if (minPenalty > penalty)
+                    if (minTardiness > penalty)
                     {
                         tolog += " < BEST";
-                        minPenalty = penalty;
+                        minTardiness = penalty;
                         bestOrder = (int[])temp.Clone();
                     }
 
@@ -72,8 +72,8 @@ namespace Solver.Methods
             {
                 options.GuiConnection?.LogText?.Invoke("Przerwano zadanie");
             }
-
-            return (bestOrder.ToList(), minPenalty);
+            stopwatch.Stop();
+            return (bestOrder.ToList(), minTardiness);
         }
     }
 }

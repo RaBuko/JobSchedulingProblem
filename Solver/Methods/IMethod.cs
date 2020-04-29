@@ -8,6 +8,6 @@ namespace Solver.Methods
     {
         IMethodOptions Prepare(IMethodOptions options);
 
-        (List<int>, int) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch);
+        (List<int> jobOrder, int minTardiness) Solve(IMethodOptions options, System.Diagnostics.Stopwatch stopwatch);
     }
 }

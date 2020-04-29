@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Solver.Utils
 {
-    enum SelectionMechanismEnum
+    public enum SelectionMechanismEnum
     {
         RouletteWheel = 0,
         BestSelection = 1,

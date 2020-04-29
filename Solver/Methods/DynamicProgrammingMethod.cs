@@ -25,7 +25,7 @@ namespace Solver.Methods
             return dynamicMethodOptions;
         }
 
-        public (List<int>, int) Solve(IMethodOptions options, Stopwatch stopwatch)
+        public (List<int> jobOrder, int minTardiness) Solve(IMethodOptions options, Stopwatch stopwatch)
         {
             DynamicProgrammingOptions dpaOptions = options as DynamicProgrammingOptions;
             var jobs = dpaOptions.Data;
@@ -82,6 +82,7 @@ namespace Solver.Methods
             {
                 options.GuiConnection?.LogText?.Invoke("Przerwano zadanie");
             }
+            stopwatch.Stop();
 
             return (new List<int>(), rozw);
         }

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Solver.Methods
 {
-    class GeneticAlgorithmMethod : IMethod
+    public class GeneticAlgorithmMethod : IMethod
     {
         public IMethodOptions Prepare(IMethodOptions options)
         {
@@ -22,7 +22,17 @@ namespace Solver.Methods
             return dynamicMethodOptions;
         }
 
-        public (List<int>, int) Solve(IMethodOptions imethodoptions, Stopwatch stopwatch)
+        public class PopulationComparer : IComparer<(List<int> jobOrder, double fitness)>
+        {
+            public int Compare((List<int> jobOrder, double fitness) x, (List<int> jobOrder, double fitness) y)
+            {
+                if (x.fitness == y.fitness) return 0;
+                else if (x.fitness > y.fitness) return 1;
+                else return -1;
+            }
+        }
+
+        public (List<int> jobOrder, int minTardiness) Solve(IMethodOptions imethodoptions, Stopwatch stopwatch)
         {
             var options = imethodoptions as GeneticAlgorithmOptions;
 
@@ -30,10 +40,13 @@ namespace Solver.Methods
             List<int> indexes;
             (List<int> jobOrder, double fitness) bestGlobalOrder = (options.Data.Select(x => x.Index).ToList(), 0);
 
-            options.GuiConnection?.LogText?.Invoke($"PARAMETRY:");
-            foreach ((PropertyInfo prop, string value) in Helper.GetParametersValues(options))
+            if (options.GuiConnection != null)
             {
-                options.GuiConnection?.LogText?.Invoke($"{prop.Name} : {value}");
+                options.GuiConnection?.LogText?.Invoke($"PARAMETRY:");
+                foreach ((PropertyInfo prop, string value) in Helper.GetParametersValues(options))
+                {
+                    options.GuiConnection?.LogText?.Invoke($"{prop.Name} : {value}");
+                }
             }
 
             int oldPopCount = (int)(options.ChromosomeCount * (1 - options.CrossoverRate));
@@ -42,6 +55,7 @@ namespace Solver.Methods
             int mutatePopCount = (int)(options.ChromosomeCount * options.MutationRate);
             options.GuiConnection?.LogText?.Invoke($"W każdej iteracji {oldPopCount} osobnikow przejdzie mutacje (MutationRate)");
 
+            int iter = options.NumberOfIterations;
             options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
             stopwatch.Start();
             try
@@ -52,9 +66,11 @@ namespace Solver.Methods
                 options.GuiConnection?.LogText?.Invoke("Obliczenie funkcji celu dla populacji startowej");
                 bestGlobalOrder = ComputeFitness(population, options.Data);
 
-                while (options.NumberOfIterations > 0)
+                while (iter > 0)
                 {
-                    options.GuiConnection?.LogText?.Invoke($"Iteracja: {options.NumberOfIterations}, generowanie nowej populacji");
+                    options.GuiConnection?.LogText?.Invoke($"Iteracja: {iter}, generowanie nowej populacji");
+                    population = population.OrderByDescending(x => x.fitness).ToList();
+
                     population = GenerateNewPopulation(population, options, oldPopCount);
 
                     indexes = ThreadSafeRandom.GenerateUniqueRandom(mutatePopCount, 0, population.Count);
@@ -68,7 +84,8 @@ namespace Solver.Methods
                     bestGlobalOrder = ComputeFitness(population, options.Data);
                     options.GuiConnection?.LogText?.Invoke($"Najlepszy wynik funkcji celu = {bestGlobalOrder.fitness}");
 
-                    options.NumberOfIterations -= 1;
+                    iter -= 1;
+                    options.CancellationToken.ThrowIfCancellationRequested();
                 }
             }
             catch (OperationCanceledException)
@@ -76,6 +93,7 @@ namespace Solver.Methods
                 imethodoptions.GuiConnection?.LogText("Przerwano wykonwanie zadania");
             }
 
+            stopwatch.Stop();
             minTardiness = options.Data.JobsFromIndexList(bestGlobalOrder.jobOrder).CountPenalty();
             return (bestGlobalOrder.jobOrder, minTardiness);
         }
