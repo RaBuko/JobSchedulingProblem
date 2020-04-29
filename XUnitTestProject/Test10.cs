@@ -18,11 +18,12 @@ namespace XUnitTestProject
         private readonly int numOfTests = 10;
         private readonly List<Job> data;
         private int bestTardiness = int.MaxValue;
+        private readonly string file;
 
         public Test10(ITestOutputHelper outputHelper)
         {
             output = outputHelper;
-            var file = $"{Helper.AppSettings.ExamplesPath}\\{jobsCount}.txt";
+            file = $"{Helper.AppSettings.ExamplesPath}\\{jobsCount}.txt";
             if (!File.Exists(file))
             {
                 data = Generator.GenerateJobs(new GeneratorOptions()
@@ -71,7 +72,7 @@ namespace XUnitTestProject
             }
 
             var min = results.Min(x => x.Score);
-            if (bestTardiness > min) { bestTardiness = min; }
+            if (bestTardiness > min) { bestTardiness = min; Loader.TrySaveNewBest(file, bestTardiness, Helper.AppSettings.SolvedDictFileName); }
             Helper.WriteResultsToCsv(method.GetType().Name, jobsCount, bestTardiness, results);
         }
 
@@ -105,7 +106,7 @@ namespace XUnitTestProject
             }
 
             var min = results.Min(x => x.Score);
-            if (bestTardiness > min) { bestTardiness = min; }
+            if (bestTardiness > min) { bestTardiness = min; Loader.TrySaveNewBest(file, bestTardiness, Helper.AppSettings.SolvedDictFileName); }
             Helper.WriteResultsToCsv(method.GetType().Name, jobsCount, bestTardiness, results);
         }
 
@@ -119,7 +120,7 @@ namespace XUnitTestProject
                 ChromosomeCount = 100,
                 CrossoverRate = 0.2,
                 MutationRate = 0.8,
-                NumberOfIterations = 10000,
+                NumberOfIterations = 1000,
                 SelectionMechanism = Solver.Utils.SelectionMechanismEnum.RouletteWheel,
             };
             var method = new GeneticAlgorithmMethod();
@@ -148,7 +149,7 @@ namespace XUnitTestProject
             }
 
             var min = results.Min(x => x.Score);
-            if (bestTardiness > min) { bestTardiness = min; }
+            if (bestTardiness > min) { bestTardiness = min; Loader.TrySaveNewBest(file, bestTardiness, Helper.AppSettings.SolvedDictFileName); }
             string expandedName = $"_CC{options.ChromosomeCount}_CR{options.CrossoverRate:0%}_MR{options.MutationRate:0%}_I{options.NumberOfIterations.ToString()}_{string.Join("", options.SelectionMechanism.ToString().Where(x => char.IsUpper(x)))}";
             Helper.WriteResultsToCsv(method.GetType().Name, jobsCount, bestTardiness, results, expandedName);
         }

@@ -127,12 +127,12 @@ namespace FormsApp.Helpers
             return foundFiles;
         }
 
-        internal static bool TrySaveNewBest(string fileName, decimal newBest)
+        public static bool TrySaveNewBest(string fileName, decimal newBest, string solvedFile = null)
         {
             bool save;
             if (!string.IsNullOrWhiteSpace(fileName))
             {
-                var foundBest = FindBest(fileName);
+                var foundBest = FindBest(fileName, solvedFile);
                 save = foundBest.Contains("-") || int.Parse(foundBest) > newBest;
             }
             else
@@ -142,9 +142,9 @@ namespace FormsApp.Helpers
 
             if (save)
             {
-                var json = LoadJson<Dictionary<string, string>>(LoadFileFromAppDirectory(Program.AppSettings.SolvedDictFileName));
+                var json = LoadJson<Dictionary<string, string>>(LoadFileFromAppDirectory(solvedFile ?? Program.AppSettings.SolvedDictFileName));
                 json[Path.GetFileNameWithoutExtension(fileName)] = newBest.ToString();
-                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), Program.AppSettings.SolvedDictFileName), JsonConvert.SerializeObject(json));
+                File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), solvedFile ?? Program.AppSettings.SolvedDictFileName), JsonConvert.SerializeObject(json));
             }
             return save;
         }
