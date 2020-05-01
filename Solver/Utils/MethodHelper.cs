@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace Solver.Utils
 {
-    public static class Helper
+    public static class MethodHelper
     {
         public static List<(Type, Type)> GetMethodAndOptionsTypes()
         {

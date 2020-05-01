@@ -26,7 +26,7 @@ namespace FormsApp
             InitializeComponent();
             LogTextAction = LogText;
             LoadFoundDataFiles(Program.AppSettings.ExamplesPath);
-            algorithms = Solver.Utils.Helper.GetMethodAndOptionsTypes();
+            algorithms = Solver.Utils.MethodHelper.GetMethodAndOptionsTypes();
             AlgorithmChangeComboBox.Items.AddRange(algorithms
                 .Select(x => x.methodType.Name.Replace("Method", string.Empty)).ToArray());
             AlgorithmChangeComboBox.SelectedIndex = 0;

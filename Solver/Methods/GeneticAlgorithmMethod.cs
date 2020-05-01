@@ -43,7 +43,7 @@ namespace Solver.Methods
             if (options.GuiConnection != null)
             {
                 options.GuiConnection?.LogText?.Invoke($"PARAMETRY:");
-                foreach ((PropertyInfo prop, string value) in Helper.GetParametersValues(options))
+                foreach ((PropertyInfo prop, string value) in MethodHelper.GetParametersValues(options))
                 {
                     options.GuiConnection?.LogText?.Invoke($"{prop.Name} : {value}");
                 }
@@ -55,7 +55,7 @@ namespace Solver.Methods
             int mutatePopCount = (int)(options.ChromosomeCount * options.MutationRate);
             options.GuiConnection?.LogText?.Invoke($"W każdej iteracji {oldPopCount} osobnikow przejdzie mutacje (MutationRate)");
 
-            int iter = options.NumberOfIterations;
+            int iter = 0;
             options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
             stopwatch.Start();
             try
@@ -66,7 +66,7 @@ namespace Solver.Methods
                 options.GuiConnection?.LogText?.Invoke("Obliczenie funkcji celu dla populacji startowej");
                 bestGlobalOrder = ComputeFitness(population, options.Data);
 
-                while (iter > 0)
+                while (iter < options.NumberOfIterations)
                 {
                     options.GuiConnection?.LogText?.Invoke($"Iteracja: {iter}, generowanie nowej populacji");
                     population = population.OrderByDescending(x => x.fitness).ToList();
@@ -84,7 +84,7 @@ namespace Solver.Methods
                     bestGlobalOrder = ComputeFitness(population, options.Data);
                     options.GuiConnection?.LogText?.Invoke($"Najlepszy wynik funkcji celu = {bestGlobalOrder.fitness}");
 
-                    iter -= 1;
+                    iter += 1;
                     options.CancellationToken.ThrowIfCancellationRequested();
                 }
             }
@@ -162,7 +162,7 @@ namespace Solver.Methods
         {
             int i = inChromosome[ThreadSafeRandom.ThisThreadsRandom.Next(inChromosome.Count)];
             int j = inChromosome[ThreadSafeRandom.ThisThreadsRandom.Next(inChromosome.Count)];
-            ArrayExtension.Swap(ref i, ref j);
+            CollectionExtension.Swap(ref i, ref j);
         }
 
         private List<int> CreateOffspring(List<int> parent1, List<int> parent2) // based on Hamidreza Haddad and Mohammadreza Nematollahi solution

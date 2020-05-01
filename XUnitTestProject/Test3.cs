@@ -1,19 +1,19 @@
-using Solver.Methods;
+﻿using Solver.Methods;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace XUnitTestProject
 {
-    public class Test10 : BaseTest
+    public class Test3 : BaseTest
     {
-        public Test10(ITestOutputHelper outputHelper) : base(outputHelper, 10, 10) { }        
+        public Test3(ITestOutputHelper outputHelper) : base(outputHelper, 3, 10) { }
 
         [Fact]
         public void BruteForceTest() =>
-            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, }); 
+            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, });
 
         [Fact]
-        public void DynamicProgrammingTest()  =>
+        public void DynamicProgrammingTest() =>
             TestMethod(new DynamicProgrammingMethod(), new DynamicProgrammingOptions() { Data = data, });
 
         [Fact]

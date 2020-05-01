@@ -70,14 +70,25 @@ namespace XUnitTestProject
             }
 
             var min = results.Min(x => x.Score);
-            if (bestTardiness > min) { bestTardiness = min; Loader.TrySaveNewBest(file, bestTardiness, Helper.AppSettings.SolvedDictFileName); }
-            string expandedName = "";
-            if (method.GetType() == typeof(GeneticAlgorithmMethod))
+            if (bestTardiness > min) { bestTardiness = min; Loader.TrySaveNewBest(file, bestTardiness, Helper.AppSettings.SolvedDictFileName); }                      
+
+            Helper.WriteResultsToCsv(method.GetType().Name, jobsCount, bestTardiness, results, GetExpandedName(options));
+        }
+
+        private string GetExpandedName(IMethodOptions options)
+        {
+            string expandedName = string.Empty;
+            if (options.GetType() == typeof(GeneticAlgorithmOptions))
             {
                 var genOptions = options as GeneticAlgorithmOptions;
-                expandedName = $"_CC{genOptions.ChromosomeCount}_CR{genOptions.CrossoverRate:0%}_MR{genOptions.MutationRate:0%}_I{genOptions.NumberOfIterations.ToString()}_{string.Join("", genOptions.SelectionMechanism.ToString().Where(x => char.IsUpper(x)))}";
+                expandedName = $"_CC{genOptions.ChromosomeCount}_CR{genOptions.CrossoverRate:0%}_MR{genOptions.MutationRate:0%}_I{genOptions.NumberOfIterations}_{string.Join("", genOptions.SelectionMechanism.ToString().Where(x => char.IsUpper(x)))}";
             }
-            Helper.WriteResultsToCsv(method.GetType().Name, jobsCount, bestTardiness, results);
+            else if (options.GetType() == typeof(SimulatedAnnealingOptions))
+            {
+                var simAnnOptions = options as SimulatedAnnealingOptions;
+                expandedName = $"_I{simAnnOptions.IterationCount}";
+            }
+            return expandedName;
         }
     }
 }

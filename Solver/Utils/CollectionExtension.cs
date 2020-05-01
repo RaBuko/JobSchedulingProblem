@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+using System.Linq;
 
 namespace Solver.Utils
 {
-    public static class ArrayExtension
+    static class CollectionExtension
     {
+        public static IEnumerable<T> Clone<T>(this IEnumerable<T> enumerableToClone) where T : ICloneable
+        {
+            return enumerableToClone.Select(item => (T)item.Clone());
+        }
+
         public static int[] ReverseSubarray(this int[] array, int startPos, int endPos)
         {
             if (startPos > endPos) throw new ArgumentException();
@@ -33,6 +37,14 @@ namespace Solver.Utils
             }
         }
 
+        public static IList<T> Swap<T>(this IList<T> list, int indexA, int indexB)
+        {
+            T tmp = list[indexA];
+            list[indexA] = list[indexB];
+            list[indexB] = tmp;
+            return list;
+        }
+
         public static void Swap<T>(ref T lhs, ref T rhs)
         {
             T temp = lhs;
@@ -40,5 +52,4 @@ namespace Solver.Utils
             rhs = temp;
         }
     }
-
 }

@@ -62,7 +62,7 @@ namespace Solver.Methods
                     int j = i;
                     while (j < jobCount && temp[j] > temp[i - 1]) j++;
                     j--;
-                    IntManip.SwapInts(ref temp[i - 1], ref temp[j]);
+                    CollectionExtension.Swap(ref temp[i - 1], ref temp[j]);
                     temp.ReverseSubarray(i, jobCount - 1);
 
                     options.CancellationToken.ThrowIfCancellationRequested();
