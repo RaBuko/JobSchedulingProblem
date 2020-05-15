@@ -21,6 +21,7 @@ namespace Solver.Methods
         {
             var options = imethodoptions as AlphaDominantGeneticOptions;
             var minTardiness = options.Data.CountPenalty();
+            int dataCount = options.Data.Count;
             List<int> best = options.Data.Select(x => x.Index).ToList();
             List<(List<int> indiv, double fitness)> pop;
 
@@ -31,24 +32,33 @@ namespace Solver.Methods
             stopwatch.Start();
             try
             {
+                options.GuiConnection?.LogText?.Invoke("Generowanie populacji startowej");
                 pop = GenerateStartingPopulation(options.Data, options.PopulationSize);
+                options.GuiConnection?.LogText?.Invoke("Sortowanie");
                 pop.Sort((x, y) => y.fitness.CompareTo(x.fitness));
                 best = pop[0].indiv;
                 int iter = 0;
                 while (iter < options.IterationCount)
                 {
+                    options.GuiConnection?.LogText?.Invoke($"Osobnik alpha o F = {pop[0].fitness}");
+                    options.GuiConnection?.LogText?.Invoke($"Iteracja: {iter}, generowanie nowej populacji");
+
                     pop = GenerateNewPopulation(pop, options);
 
                     for (int i = 0; i < pop.Count; i++)
                     {
                         if (ThreadSafeRandom.GetRandomDouble() < options.MutationChance)
                         {
-                            options.GuiConnection?.LogText?.Invoke("");
-                            Mutate(pop[i].indiv);
+                            string prev = $"{string.Join(',', pop[i].indiv)}, F = {pop[i].fitness}";
+                            int index1 = ThreadSafeRandom.ThisThreadsRandom.Next(dataCount);
+                            int index2 = ThreadSafeRandom.ThisThreadsRandom.Next(dataCount);
+                            pop[i].indiv.Swap(index1, index2);
                             pop[i] = (pop[i].indiv, CalculateFitness(pop[i].indiv, options.Data));
+                            options.GuiConnection?.LogText?.Invoke($"   Mutacja: i = {i} | {prev} -> {string.Join(',', pop[i].indiv)}, F = {pop[i].fitness}");
                         }
                     }
 
+                    options.GuiConnection?.LogText?.Invoke("    Sortowanie");
                     pop.Sort((x, y) => y.fitness.CompareTo(x.fitness));
                     best = pop[0].indiv;
 
@@ -61,32 +71,29 @@ namespace Solver.Methods
                 imethodoptions.GuiConnection?.LogText("Przerwano wykonwanie zadania");
             }
             stopwatch.Stop();
+            options.GuiConnection?.LogText?.Invoke($"Koniec : {DateTime.Now:HH:mm:ss.fff}");
             minTardiness = options.Data.JobsFromIndexList(best).CountPenalty();
-            return (null, minTardiness);
-        }
-
-        private void Mutate(List<int> inChromosome)
-        {
-            int i = inChromosome[ThreadSafeRandom.ThisThreadsRandom.Next(inChromosome.Count)];
-            int j = inChromosome[ThreadSafeRandom.ThisThreadsRandom.Next(inChromosome.Count)];
-            CollectionExtension.Swap(ref i, ref j);
+            return (best, minTardiness);
         }
 
         List<(List<int> indiv, double fitness)> GenerateNewPopulation(List<(List<int> indiv, double fitness)> prevPop, AlphaDominantGeneticOptions options)
         {
             var newPop = new List<(List<int> indiv, double fitness)>(prevPop.GetRange(0, options.OldPopCount));
-            var (indiv, _) = newPop[0];
+            var alpha = newPop[0].indiv;
 
-            while (newPop.Count != options.PopulationSize)
+            while (true)
             {
                 for (int i = 1; i < options.OldPopCount; i++)
                 {
-                    List<int> child = Crossover(indiv, newPop[i].indiv);
+                    List<int> child = Crossover(alpha, newPop[i].indiv);
                     newPop.Add((child, CalculateFitness(child, options.Data)));
+                    if (newPop.Count >= options.PopulationSize)
+                    {
+                        if (newPop.Count > options.PopulationSize) { newPop = newPop.GetRange(0, options.PopulationSize); }
+                        return newPop;
+                    }
                 }
             }
-
-            return newPop;
         }
 
         List<int> Crossover(List<int> parent1, List<int> parent2)
@@ -95,7 +102,7 @@ namespace Solver.Methods
             int cutIndex = ThreadSafeRandom.ThisThreadsRandom.Next(len);
             int testIndex;
 
-            var child = new List<int>(parent1);
+            var child = new List<int>(parent1.GetRange(0, cutIndex));
 
             for (int i = cutIndex; i < len; i++)
             {
