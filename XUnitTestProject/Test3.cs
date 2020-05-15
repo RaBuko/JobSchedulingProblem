@@ -35,5 +35,15 @@ namespace XUnitTestProject
                 Data = data,
                 IterationCount = 2000,
             });
+
+        [Fact]
+        public void AlphaDominantGeneticTest() =>
+            TestMethod(new AlphaDominantGeneticMethod(), new AlphaDominantGeneticOptions()
+            {
+                Data = data,
+                IterationCount = 1000,
+                MutationChance = 0.2f,
+                PopulationSize = 50,                
+            });
     }
 }

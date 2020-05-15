@@ -18,7 +18,7 @@ namespace Solver.Methods
         public (List<int> jobOrder, int minTardiness) Solve(IMethodOptions imethodoptions, Stopwatch stopwatch)
         {
             var options = imethodoptions as SimulatedAnnealingOptions;
-            List<int> jobOrder = options.Data.Select(x => x.Index).ToList();
+            List<int> bestOrder = options.Data.Select(x => x.Index).ToList();
             var minTardiness = int.MaxValue;
 
             var count = 0;
@@ -32,20 +32,20 @@ namespace Solver.Methods
                 {
                     options.GuiConnection?.LogText?.Invoke($"Iteracja: {count}");
 
-                    List<int> candidateOrder = new List<int>(jobOrder);
-                    candidateOrder.Swap(ThreadSafeRandom.ThisThreadsRandom.Next(0, jobOrder.Count), ThreadSafeRandom.ThisThreadsRandom.Next(0, jobOrder.Count));
+                    List<int> candidateOrder = new List<int>(bestOrder);
+                    candidateOrder.Swap(ThreadSafeRandom.ThisThreadsRandom.Next(0, bestOrder.Count), ThreadSafeRandom.ThisThreadsRandom.Next(0, bestOrder.Count));
 
                     options.GuiConnection?.LogText?.Invoke($"Kandydat: {string.Join(",", candidateOrder)}");
-                    var penaltyChange = options.Data.JobsFromIndexList(candidateOrder).CountPenalty() - options.Data.JobsFromIndexList(jobOrder).CountPenalty();
-                    options.GuiConnection?.LogText?.Invoke($"Zmiana sumy opóźnień: {penaltyChange}");
+                    var delta = options.Data.JobsFromIndexList(candidateOrder).CountPenalty() - options.Data.JobsFromIndexList(bestOrder).CountPenalty();
+                    options.GuiConnection?.LogText?.Invoke($"Zmiana sumy opóźnień: {delta}");
 
                     var alpha = 10 + count * step * 2; // control parameter
-                    var acceptanceProbability = Math.Exp(-alpha * penaltyChange);
+                    var acceptanceProbability = Math.Exp(-alpha * delta);
                     options.GuiConnection?.LogText?.Invoke($"Szansa akceptacji = { acceptanceProbability}");
 
                     if (acceptanceProbability > ThreadSafeRandom.GetRandomDouble(0, 1))
                     {
-                        jobOrder = candidateOrder;
+                        bestOrder = candidateOrder;
                         options.GuiConnection?.LogText?.Invoke($"Zaakceptowano{Environment.NewLine}");
                     }
 
@@ -59,8 +59,8 @@ namespace Solver.Methods
             }
 
             stopwatch.Stop();
-            minTardiness = options.Data.JobsFromIndexList(jobOrder).CountPenalty();
-            return (jobOrder, minTardiness);
+            minTardiness = options.Data.JobsFromIndexList(bestOrder).CountPenalty();
+            return (bestOrder, minTardiness);
         }
     }
 }

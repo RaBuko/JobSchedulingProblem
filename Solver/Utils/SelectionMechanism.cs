@@ -18,8 +18,8 @@ namespace Solver.Utils
             int iter = 0;
             for (iter = 0; iter < chromosomes.Count; iter++)
             {
-                if (p <= 0) break;
                 p -= chromosomes[iter].fitness;
+                if (p <= 0) break;
             }
             if (iter >= chromosomes.Count) iter = chromosomes.Count - 1; //safeguard, if precision exceeded chromosome count in result
             return iter;
