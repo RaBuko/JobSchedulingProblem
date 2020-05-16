@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using FormsApp.Helpers;
 using System;
 using System.Collections.Generic;
@@ -33,22 +34,21 @@ namespace XUnitTestProject
             }).ToList();
         }
 
-        public static void WriteResultsToCsv(string methodName, int size, int bestFoundScore, List<Result> results, string expandFileName = "")
+        public static void WriteResultsToCsv(string methodName, int size, int bestFoundScore, List<Result> results)
         {
             Directory.CreateDirectory(TestDirPath);
-            using var writer = new StreamWriter($"{TestDirPath}//{methodName}_{size}{expandFileName}.csv");
+            var path = $"{TestDirPath}//{size}_{bestFoundScore}.csv";
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = !File.Exists(path) };
+            using var writer = new StreamWriter(path, append: true);
 
             results = results.Select(x =>
             {
-                x.BestFoundScore = bestFoundScore;
-                x.Method = methodName;
-                x.Size = size;
+                x.Method = methodName.Replace("Method", "");
                 x.PercentScoreToBestScore = (x.Score / (float)bestFoundScore).ToString("0.00");
                 return x;
             }).ToList();
 
-
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            using var csv = new CsvWriter(writer, config);
             csv.WriteRecords(results);
         }
 

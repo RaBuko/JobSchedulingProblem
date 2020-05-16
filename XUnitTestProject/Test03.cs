@@ -1,19 +1,19 @@
-using Solver.Methods;
+﻿using Solver.Methods;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace XUnitTestProject
 {
-    public class Test10 : BaseTest
+    public class Test03 : BaseTest
     {
-        public Test10(ITestOutputHelper outputHelper) : base(outputHelper, 10, 20) { }        
+        public Test03(ITestOutputHelper outputHelper) : base(outputHelper, 3, 20) { }
 
         [Fact]
         public void BruteForceTest() =>
-            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, }); 
+            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, });
 
         [Fact]
-        public void DynamicProgrammingTest()  =>
+        public void DynamicProgrammingTest() =>
             TestMethod(new DynamicProgrammingMethod(), new DynamicProgrammingOptions() { Data = data, });
 
         [Fact]
@@ -38,13 +38,13 @@ namespace XUnitTestProject
 
         [Fact]
         public void AlphaDominantGeneticTest() =>
-           TestMethod(new AlphaDominantGeneticMethod(), new AlphaDominantGeneticOptions()
-           {
-               Data = data,
-               IterationCount = 1000,
-               MutationChance = 0.8f,
-               PopulationSize = 100,
-               OldPopPart = 0.5f,
-           });
+            TestMethod(new AlphaDominantGeneticMethod(), new AlphaDominantGeneticOptions()
+            {
+                Data = data,
+                IterationCount = 1000,
+                MutationChance = 0.8f,
+                PopulationSize = 100,
+                OldPopPart = 0.5f,
+            });
     }
 }

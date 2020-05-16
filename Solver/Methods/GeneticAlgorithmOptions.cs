@@ -19,10 +19,10 @@ namespace Solver.Methods
         public bool ShouldLogGraphics { get; set; }
 
         [UserDefined("Liczba iteracji", typeof(int), 1000)]
-        public int NumberOfIterations { get; set; }
+        public int IterationCount { get; set; }
 
         [UserDefined("Ilość chromosomów", typeof(int), 60)]
-        public int ChromosomeCount { get; set; }
+        public int PopulationSize { get; set; }
 
         [UserDefined("Mechanizm selekcji", typeof(SelectionMechanismEnum), SelectionMechanismEnum.RouletteWheel)]
         public SelectionMechanismEnum SelectionMechanism { get; set; }

@@ -49,10 +49,10 @@ namespace Solver.Methods
                 }
             }
 
-            int oldPopCount = (int)(options.ChromosomeCount * (1 - options.CrossoverRate));
+            int oldPopCount = (int)(options.PopulationSize * (1 - options.CrossoverRate));
             options.GuiConnection?.LogText?.Invoke($"W nowej populacji pozostanie {oldPopCount} osobnikow z poprzedniej generacji (CrossoverRate)");
 
-            int mutatePopCount = (int)(options.ChromosomeCount * options.MutationRate);
+            int mutatePopCount = (int)(options.PopulationSize * options.MutationRate);
             options.GuiConnection?.LogText?.Invoke($"W każdej iteracji {oldPopCount} osobnikow przejdzie mutacje (MutationRate)");
 
             int iter = 0;
@@ -61,12 +61,12 @@ namespace Solver.Methods
             try
             {
                 options.GuiConnection?.LogText?.Invoke("Generowanie populacji startowej");
-                var population = GenerateStartingPopulation(options.Data, options.ChromosomeCount);
+                var population = GenerateStartingPopulation(options.Data, options.PopulationSize);
 
                 options.GuiConnection?.LogText?.Invoke("Obliczenie funkcji celu dla populacji startowej");
                 bestGlobalOrder = ComputeFitness(population, options.Data);
 
-                while (iter < options.NumberOfIterations)
+                while (iter < options.IterationCount)
                 {
                     options.GuiConnection?.LogText?.Invoke($"Iteracja: {iter}, generowanie nowej populacji");
                     population = population.OrderByDescending(x => x.fitness).ToList();

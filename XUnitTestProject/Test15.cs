@@ -1,19 +1,19 @@
-﻿using Solver.Methods;
+using Solver.Methods;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace XUnitTestProject
 {
-    public class Test3 : BaseTest
+    public class Test15 : BaseTest
     {
-        public Test3(ITestOutputHelper outputHelper) : base(outputHelper, 3, 10) { }
+        public Test15(ITestOutputHelper outputHelper) : base(outputHelper, 15, 20) { }        
 
         [Fact]
         public void BruteForceTest() =>
-            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, });
+            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, }); 
 
         [Fact]
-        public void DynamicProgrammingTest() =>
+        public void DynamicProgrammingTest()  =>
             TestMethod(new DynamicProgrammingMethod(), new DynamicProgrammingOptions() { Data = data, });
 
         [Fact]
@@ -21,10 +21,10 @@ namespace XUnitTestProject
             TestMethod(new GeneticAlgorithmMethod(), new GeneticAlgorithmOptions()
             {
                 Data = data,
-                ChromosomeCount = 100,
+                PopulationSize = 100,
                 CrossoverRate = 0.2,
                 MutationRate = 0.8,
-                NumberOfIterations = 1000,
+                IterationCount = 1000,
                 SelectionMechanism = Solver.Utils.SelectionMechanismEnum.RouletteWheel,
             });
 
@@ -38,12 +38,13 @@ namespace XUnitTestProject
 
         [Fact]
         public void AlphaDominantGeneticTest() =>
-            TestMethod(new AlphaDominantGeneticMethod(), new AlphaDominantGeneticOptions()
-            {
-                Data = data,
-                IterationCount = 1000,
-                MutationChance = 0.2f,
-                PopulationSize = 50,                
-            });
+           TestMethod(new AlphaDominantGeneticMethod(), new AlphaDominantGeneticOptions()
+           {
+               Data = data,
+               IterationCount = 1000,
+               MutationChance = 0.8f,
+               PopulationSize = 100,
+               OldPopPart = 0.5f,
+           });
     }
 }

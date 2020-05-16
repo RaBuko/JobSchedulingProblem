@@ -48,22 +48,19 @@ namespace XUnitTestProject
         {
             var results = new List<Result>();
             output.WriteLine("START Prepare");
-            var stopwatch = new Stopwatch();
             options = method.Prepare(options);
-            stopwatch.Stop();
-            string elapsedPrepare = stopwatch.Elapsed.ToString("G");
             output.WriteLine("END Prepare");
 
             for (int i = 0; i < testsToMake + 1; i++)
             {
-                stopwatch = new Stopwatch();
+                var stopwatch = new Stopwatch();
                 var (jobOrder, minTardiness) = method.Solve(options, stopwatch);
                 stopwatch.Stop();
                 var result = new Result()
                 {
                     Score = minTardiness,
                     ExecElapsed = stopwatch.Elapsed.ToString("G"),
-                    PrepareElapsed = elapsedPrepare,
+                    Parameters = GetParameters(options)
                 };
                 if (i != 0) results.Add(result);
                 Helper.LogStatus($"{method.GetType().Name} {i}/{testsToMake} | ExecElapsed = {result.ExecElapsed}");
@@ -72,21 +69,26 @@ namespace XUnitTestProject
             var min = results.Min(x => x.Score);
             if (bestTardiness > min) { bestTardiness = min; Loader.TrySaveNewBest(file, bestTardiness, Helper.AppSettings.SolvedDictFileName); }                      
 
-            Helper.WriteResultsToCsv(method.GetType().Name, jobsCount, bestTardiness, results, GetExpandedName(options));
+            Helper.WriteResultsToCsv(method.GetType().Name, jobsCount, bestTardiness, results);
         }
 
-        private string GetExpandedName(IMethodOptions options)
+        private string GetParameters(IMethodOptions options)
         {
             string expandedName = string.Empty;
             if (options.GetType() == typeof(GeneticAlgorithmOptions))
             {
                 var genOptions = options as GeneticAlgorithmOptions;
-                expandedName = $"_CC{genOptions.ChromosomeCount}_CR{genOptions.CrossoverRate:0%}_MR{genOptions.MutationRate:0%}_I{genOptions.NumberOfIterations}_{string.Join("", genOptions.SelectionMechanism.ToString().Where(x => char.IsUpper(x)))}";
+                expandedName = $"I{genOptions.IterationCount}_PS{genOptions.PopulationSize}_CR{genOptions.CrossoverRate:0}_MR{genOptions.MutationRate:0}";
             }
             else if (options.GetType() == typeof(SimulatedAnnealingOptions))
             {
                 var simAnnOptions = options as SimulatedAnnealingOptions;
-                expandedName = $"_I{simAnnOptions.IterationCount}";
+                expandedName = $"I{simAnnOptions.IterationCount}";
+            }
+            else if (options.GetType() == typeof(AlphaDominantGeneticOptions))
+            {
+                var alphaDomGenOptions = options as AlphaDominantGeneticOptions;
+                expandedName = $"I{alphaDomGenOptions.IterationCount}_PS{alphaDomGenOptions.PopulationSize}_OP{alphaDomGenOptions.OldPopPart:0}_MC{alphaDomGenOptions.MutationChance:0}";
             }
             return expandedName;
         }
