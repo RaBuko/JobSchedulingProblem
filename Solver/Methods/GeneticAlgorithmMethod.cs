@@ -35,10 +35,10 @@ namespace Solver.Methods
         public (List<int> jobOrder, int minTardiness) Solve(IMethodOptions imethodoptions, Stopwatch stopwatch)
         {
             var options = imethodoptions as GeneticAlgorithmOptions;
-
+            var dataCount = options.Data.Count;
             var minTardiness = int.MaxValue;
             List<int> indexes;
-            (List<int> jobOrder, double fitness) bestGlobalOrder = (options.Data.Select(x => x.Index).ToList(), 0);
+            List<(List<int> jobsOrder, double fitness)> population = new List<(List<int> jobsOrder, double fitness)>();
 
             if (options.GuiConnection != null)
             {
@@ -61,28 +61,22 @@ namespace Solver.Methods
             try
             {
                 options.GuiConnection?.LogText?.Invoke("Generowanie populacji startowej");
-                var population = GenerateStartingPopulation(options.Data, options.PopulationSize);
-
-                options.GuiConnection?.LogText?.Invoke("Obliczenie funkcji celu dla populacji startowej");
-                bestGlobalOrder = ComputeFitness(population, options.Data);
+                population = GenerateStartingPopulation(options.Data, options.PopulationSize);
 
                 while (iter < options.IterationCount)
                 {
                     options.GuiConnection?.LogText?.Invoke($"Iteracja: {iter}, generowanie nowej populacji");
-                    population = population.OrderByDescending(x => x.fitness).ToList();
-
                     population = GenerateNewPopulation(population, options, oldPopCount);
 
                     indexes = ThreadSafeRandom.GenerateUniqueRandom(mutatePopCount, 0, population.Count);
                     options.GuiConnection?.LogText?.Invoke($"Mutują: {string.Join(',', indexes)}");
                     foreach (var i in indexes)
                     {
-                        Mutate(population[i].jobsOrder);
+                        int index1 = ThreadSafeRandom.ThisThreadsRandom.Next(dataCount);
+                        int index2 = ThreadSafeRandom.ThisThreadsRandom.Next(dataCount);
+                        population[i].jobsOrder.Swap(index1, index2);
+                        population[i] = (population[i].jobsOrder, CalculateFitness(population[i].jobsOrder, options.Data));
                     }
-
-
-                    bestGlobalOrder = ComputeFitness(population, options.Data);
-                    options.GuiConnection?.LogText?.Invoke($"Najlepszy wynik funkcji celu = {bestGlobalOrder.fitness}");
 
                     iter += 1;
                     options.CancellationToken.ThrowIfCancellationRequested();
@@ -92,10 +86,11 @@ namespace Solver.Methods
             {
                 imethodoptions.GuiConnection?.LogText("Przerwano wykonwanie zadania");
             }
-
             stopwatch.Stop();
-            minTardiness = options.Data.JobsFromIndexList(bestGlobalOrder.jobOrder).CountPenalty();
-            return (bestGlobalOrder.jobOrder, minTardiness);
+            var bestFitness = population.Max(x => x.fitness);
+            var (bestJobsOrder, fitness) = population.Find(x => x.fitness == bestFitness);
+            minTardiness = options.Data.JobsFromIndexList(bestJobsOrder).CountPenalty();
+            return (bestJobsOrder, minTardiness);
         }
 
 
@@ -107,33 +102,13 @@ namespace Solver.Methods
             {
                 var clonedList = new List<int>(indexes);
                 clonedList.Shuffle();
-                startingPopulation.Add((clonedList, 0));
+                startingPopulation.Add((clonedList, CalculateFitness(clonedList, data)));
             }
             return startingPopulation;
         }
 
-        (List<int> jobsOrder, double fitness) ComputeFitness(List<(List<int> jobsOrder, double fitness)> population, List<Job> jobs)
-        {
-            (List<int> jobsOrder, double fitness) bestFitness = population[0];
-            for (int i = 0; i < population.Count; i++)
-            {
-                population[i] = (population[i].jobsOrder, CalculateFitness(population[i].jobsOrder, jobs));
-                if (bestFitness.fitness < population[i].fitness)
-                {
-                    bestFitness = population[i];
-                }
-            }
-            return bestFitness;
-        }
-
         private List<(List<int> jobsOrder, double fitness)> GenerateNewPopulation(List<(List<int> jobsOrder, double fitness)> population, GeneticAlgorithmOptions options, int oldPopCount)
         {
-            int parent1Index;
-            int parent2Index;
-            List<int> parent1;
-            List<int> parent2;
-            List<int> parentStays;
-
             var newPopulation = new List<(List<int> jobsOrder, double fitness)>();
             var indexes = ThreadSafeRandom.GenerateUniqueRandom(oldPopCount, 0, population.Count);
             options.GuiConnection?.LogText?.Invoke($"Zostaja w nastepnej generacji: {string.Join(',', indexes)}");
@@ -142,27 +117,21 @@ namespace Solver.Methods
 
             while (newPopulation.Count < population.Count)
             {
-                parent1Index = options.SelectionMechanismAction.Invoke(population);
-                parent2Index = options.SelectionMechanismAction.Invoke(population);
+                var parent1Index = options.SelectionMechanismAction.Invoke(population);
+                var parent2Index = options.SelectionMechanismAction.Invoke(population);
                 options.GuiConnection?.LogText?.Invoke($"P1: {parent1Index} | P2: {parent2Index}");
-                parent1 = population[parent1Index].jobsOrder;
-                parent2 = population[parent2Index].jobsOrder;
-                newPopulation.Add((CreateOffspring(parent1, parent2), 0));
-                parentStays = ThreadSafeRandom.ThisThreadsRandom.NextDouble() < 0.5 ? parent1 : parent2;
+                var parent1 = population[parent1Index];
+                var parent2 = population[parent2Index];
+                var offspring = CreateOffspring(parent1.jobsOrder, parent2.jobsOrder);
+                newPopulation.Add((offspring, CalculateFitness(offspring, options.Data)));
+                var parentStays = ThreadSafeRandom.ThisThreadsRandom.NextDouble() < 0.5 ? parent1 : parent2;
                 options.GuiConnection?.LogText?.Invoke($"Nowy osobnik, zostaje rodzic: {string.Join(',', parentStays)}");
-                newPopulation.Add((parentStays, 0));
+                newPopulation.Add(parentStays);
             }
 
             while (newPopulation.Count > population.Count) newPopulation.RemoveAt(newPopulation.Count - 1);
 
             return newPopulation;
-        }
-
-        private void Mutate(List<int> inChromosome)
-        {
-            int i = inChromosome[ThreadSafeRandom.ThisThreadsRandom.Next(inChromosome.Count)];
-            int j = inChromosome[ThreadSafeRandom.ThisThreadsRandom.Next(inChromosome.Count)];
-            CollectionExtension.Swap(ref i, ref j);
         }
 
         private List<int> CreateOffspring(List<int> parent1, List<int> parent2) // based on Hamidreza Haddad and Mohammadreza Nematollahi solution

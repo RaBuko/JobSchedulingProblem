@@ -4,12 +4,12 @@ using Xunit.Abstractions;
 
 namespace XUnitTestProject
 {
-    public class Test14 : BaseTest
+    public class Test020 : BaseTest
     {
-        public Test14(ITestOutputHelper outputHelper) : base(outputHelper, 14, 20) { }        
+        public Test020(ITestOutputHelper outputHelper) : base(outputHelper, 20, 20) { }
 
         [Fact]
-        public void DynamicProgrammingTest()  =>
+        public void DynamicProgrammingTest() =>
             TestMethod(new DynamicProgrammingMethod(), new DynamicProgrammingOptions() { Data = data, });
 
         [Fact]

@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
 
 namespace Solver.Methods
 {
@@ -23,7 +21,8 @@ namespace Solver.Methods
             var minTardiness = options.Data.CountPenalty();
             int dataCount = options.Data.Count;
             List<int> best = options.Data.Select(x => x.Index).ToList();
-            List<(List<int> indiv, double fitness)> pop;
+            List<(List<int> indiv, double fitness)> pop;  
+            string prev = "";
 
             options.OldPopCount = (int)(options.OldPopPart * options.PopulationSize);
             options.GuiConnection?.LogText?.Invoke($"Wielkość starej populacji: {options.OldPopCount}");
@@ -49,7 +48,7 @@ namespace Solver.Methods
                     {
                         if (ThreadSafeRandom.GetRandomDouble() < options.MutationChance)
                         {
-                            string prev = $"{string.Join(',', pop[i].indiv)}, F = {pop[i].fitness}";
+                            if (options.GuiConnection != null) prev = $"{string.Join(',', pop[i].indiv)}, F = {pop[i].fitness}";
                             int index1 = ThreadSafeRandom.ThisThreadsRandom.Next(dataCount);
                             int index2 = ThreadSafeRandom.ThisThreadsRandom.Next(dataCount);
                             pop[i].indiv.Swap(index1, index2);
