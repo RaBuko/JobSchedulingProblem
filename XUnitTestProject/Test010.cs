@@ -6,11 +6,12 @@ namespace XUnitTestProject
 {
     public class Test010 : BaseTest
     {
-        public Test010(ITestOutputHelper outputHelper) : base(outputHelper, 10, 20) { }        
+        public Test010(ITestOutputHelper outputHelper) : base(outputHelper, 10, 20) { }
 
         [Fact]
         public void BruteForceTest() =>
-            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, }); 
+            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, });
+
 
         [Fact]
         public void DynamicProgrammingTest()  =>
@@ -44,7 +45,7 @@ namespace XUnitTestProject
                IterationCount = 1000,
                MutationChance = 0.8f,
                PopulationSize = 100,
-               OldPopPart = 0.5f,
+               CrossoverRate = 0.5f,
            });
     }
 }

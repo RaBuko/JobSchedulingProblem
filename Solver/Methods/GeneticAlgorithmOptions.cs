@@ -21,11 +21,8 @@ namespace Solver.Methods
         [UserDefined("Liczba iteracji", typeof(int), 1000)]
         public int IterationCount { get; set; }
 
-        [UserDefined("Ilość chromosomów", typeof(int), 60)]
+        [UserDefined("Wielkość populacji", typeof(int), 60)]
         public int PopulationSize { get; set; }
-
-        [UserDefined("Mechanizm selekcji", typeof(SelectionMechanismEnum), SelectionMechanismEnum.RouletteWheel)]
-        public SelectionMechanismEnum SelectionMechanism { get; set; }
 
         [UserDefined("Częstotliwość mutacji", typeof(float), 0.8)]
         public double MutationRate { get; set; }
@@ -33,7 +30,10 @@ namespace Solver.Methods
         [UserDefined("Częstotliwość krzyżowania", typeof(float), 0.2)]
         public double CrossoverRate { get; set; }
 
-        public List<(List<int> jobsOrder, double fitness)> StartingPopulation { get; set; }
+        [UserDefined("Mechanizm selekcji", typeof(SelectionMechanismEnum), SelectionMechanismEnum.RouletteWheel)]
+        public SelectionMechanismEnum SelectionMechanism { get; set; }
+
         public Func<List<(List<int> jobsOrder, double fitness)>, int> SelectionMechanismAction { get; set; }
+        public int OldPopCount { get; internal set; }
     }
 }

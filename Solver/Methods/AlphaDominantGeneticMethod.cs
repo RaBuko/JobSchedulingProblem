@@ -24,7 +24,7 @@ namespace Solver.Methods
             List<(List<int> indiv, double fitness)> pop;  
             string prev = "";
 
-            options.OldPopCount = (int)(options.OldPopPart * options.PopulationSize);
+            options.OldPopCount = (int)(options.PopulationSize * (1 - options.CrossoverRate));
             options.GuiConnection?.LogText?.Invoke($"Wielkość starej populacji: {options.OldPopCount}");
 
             options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
@@ -33,6 +33,7 @@ namespace Solver.Methods
             {
                 options.GuiConnection?.LogText?.Invoke("Generowanie populacji startowej");
                 pop = GenerateStartingPopulation(options.Data, options.PopulationSize);
+                
                 options.GuiConnection?.LogText?.Invoke("Sortowanie");
                 pop.Sort((x, y) => y.fitness.CompareTo(x.fitness));
                 best = pop[0].indiv;

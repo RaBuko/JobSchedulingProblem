@@ -8,9 +8,7 @@ namespace Solver.Methods
     public class AlphaDominantGeneticOptions : IMethodOptions
     {
         public List<Job> Data { get; set; }
-
         public GuiConnection GuiConnection { get; set; }
-
         public CancellationToken CancellationToken { get; set; }
 
         [UserDefined("Pokaż szczegóły", typeof(bool), true)]
@@ -22,14 +20,14 @@ namespace Solver.Methods
         [UserDefined("Liczba iteracji", typeof(int), 1000)]
         public int IterationCount { get; set; }
 
-        [UserDefined("Wielkość populacji", typeof(int), 50)]
+        [UserDefined("Wielkość populacji", typeof(int), 60)]
         public int PopulationSize { get; set; }
 
-        [UserDefined("Szansa mutacji" ,typeof(float), 0.2)]
+        [UserDefined("Szansa mutacji" ,typeof(float), 0.8)]
         public float MutationChance { get; set; }
 
-        [UserDefined("Część starej populacji w kolejnych generacjach", typeof(float), 0.5)]
-        public float OldPopPart { get; set; }
+        [UserDefined("Częstotliowość krzyżowania", typeof(float), 0.2)]
+        public float CrossoverRate { get; set; }
 
         public int OldPopCount { get; set; }
     }

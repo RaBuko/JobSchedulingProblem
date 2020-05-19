@@ -49,11 +49,11 @@ namespace Solver.Methods
                 }
             }
 
-            int oldPopCount = (int)(options.PopulationSize * (1 - options.CrossoverRate));
-            options.GuiConnection?.LogText?.Invoke($"W nowej populacji pozostanie {oldPopCount} osobnikow z poprzedniej generacji (CrossoverRate)");
+            options.OldPopCount = (int)(options.PopulationSize * (1 - options.CrossoverRate));
+            options.GuiConnection?.LogText?.Invoke($"W nowej populacji pozostanie {options.OldPopCount} osobnikow z poprzedniej generacji (CrossoverRate)");
 
             int mutatePopCount = (int)(options.PopulationSize * options.MutationRate);
-            options.GuiConnection?.LogText?.Invoke($"W każdej iteracji {oldPopCount} osobnikow przejdzie mutacje (MutationRate)");
+            options.GuiConnection?.LogText?.Invoke($"W każdej iteracji {options.OldPopCount} osobnikow przejdzie mutacje (MutationRate)");
 
             int iter = 0;
             options.GuiConnection?.LogText?.Invoke($"Start : {DateTime.Now:HH:mm:ss.fff}");
@@ -66,7 +66,7 @@ namespace Solver.Methods
                 while (iter < options.IterationCount)
                 {
                     options.GuiConnection?.LogText?.Invoke($"Iteracja: {iter}, generowanie nowej populacji");
-                    population = GenerateNewPopulation(population, options, oldPopCount);
+                    population = GenerateNewPopulation(population, options);
 
                     indexes = ThreadSafeRandom.GenerateUniqueRandom(mutatePopCount, 0, population.Count);
                     options.GuiConnection?.LogText?.Invoke($"Mutują: {string.Join(',', indexes)}");
@@ -107,10 +107,10 @@ namespace Solver.Methods
             return startingPopulation;
         }
 
-        private List<(List<int> jobsOrder, double fitness)> GenerateNewPopulation(List<(List<int> jobsOrder, double fitness)> population, GeneticAlgorithmOptions options, int oldPopCount)
+        private List<(List<int> jobsOrder, double fitness)> GenerateNewPopulation(List<(List<int> jobsOrder, double fitness)> population, GeneticAlgorithmOptions options)
         {
             var newPopulation = new List<(List<int> jobsOrder, double fitness)>();
-            var indexes = ThreadSafeRandom.GenerateUniqueRandom(oldPopCount, 0, population.Count);
+            var indexes = ThreadSafeRandom.GenerateUniqueRandom(options.OldPopCount, 0, population.Count);
             options.GuiConnection?.LogText?.Invoke($"Zostaja w nastepnej generacji: {string.Join(',', indexes)}");
 
             foreach (var i in indexes) { newPopulation.Add(population[i]); }

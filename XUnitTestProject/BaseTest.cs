@@ -88,7 +88,7 @@ namespace XUnitTestProject
             else if (options.GetType() == typeof(AlphaDominantGeneticOptions))
             {
                 var alphaDomGenOptions = options as AlphaDominantGeneticOptions;
-                expandedName = $"I{alphaDomGenOptions.IterationCount}_PS{alphaDomGenOptions.PopulationSize}_OP{alphaDomGenOptions.OldPopPart:0}_MC{alphaDomGenOptions.MutationChance:0}";
+                expandedName = $"I{alphaDomGenOptions.IterationCount}_PS{alphaDomGenOptions.PopulationSize}_OP{alphaDomGenOptions.CrossoverRate:0}_MC{alphaDomGenOptions.MutationChance:0}";
             }
             return expandedName;
         }

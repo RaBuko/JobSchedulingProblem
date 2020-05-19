@@ -36,7 +36,7 @@ namespace XUnitTestProject
                IterationCount = 1000,
                MutationChance = 0.8f,
                PopulationSize = 100,
-               OldPopPart = 0.5f,
+               CrossoverRate = 0.5f,
            });
     }
 }

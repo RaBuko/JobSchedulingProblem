@@ -83,7 +83,6 @@ namespace Solver.Methods
                 options.GuiConnection?.LogText?.Invoke("Przerwano zadanie");
             }
             stopwatch.Stop();
-            dpaOptions.Subsets = null;
             return (new List<int>(), rozw);
         }
     }
