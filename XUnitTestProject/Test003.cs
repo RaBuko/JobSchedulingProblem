@@ -1,15 +1,19 @@
-using Solver.Methods;
+﻿using Solver.Methods;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace XUnitTestProject
 {
-    public class Test015 : BaseTest
+    public class Test003 : BaseTest
     {
-        public Test015(ITestOutputHelper outputHelper) : base(outputHelper, 15, 20) { }        
+        public Test003(ITestOutputHelper outputHelper) : base(outputHelper, 3, 20) { }
 
         [Fact]
-        public void DynamicProgrammingTest()  =>
+        public void BruteForceTest() =>
+            TestMethod(new BruteForceMethod(), new BruteForceOptions() { Data = data, });
+
+        [Fact]
+        public void DynamicProgrammingTest() =>
             TestMethod(new DynamicProgrammingMethod(), new DynamicProgrammingOptions() { Data = data, });
 
         [Fact]
@@ -17,8 +21,8 @@ namespace XUnitTestProject
             TestMethod(new GeneticAlgorithmMethod(), new GeneticAlgorithmOptions()
             {
                 Data = data,
-                PopulationSize = 100,
-                CrossoverRate = 0.2,
+                PopulationSize = 60,
+                CrossoverRate = 0.2f,
                 MutationRate = 0.8,
                 IterationCount = 1000,
                 SelectionMechanism = Solver.Utils.SelectionMechanismEnum.RouletteWheel,
@@ -34,13 +38,13 @@ namespace XUnitTestProject
 
         [Fact]
         public void AlphaDominantGeneticTest() =>
-           TestMethod(new AlphaDominantGeneticMethod(), new AlphaDominantGeneticOptions()
-           {
-               Data = data,
-               IterationCount = 1000,
-               MutationChance = 0.8f,
-               PopulationSize = 100,
-               CrossoverRate = 0.5f,
-           });
+            TestMethod(new AlphaDominantGeneticMethod(), new AlphaDominantGeneticOptions()
+            {
+                Data = data,
+                IterationCount = 1000,
+                MutationChance = 0.8f,
+                PopulationSize = 60,
+                CrossoverRate = 0.2f,
+            });
     }
 }

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Xunit;
 
 namespace XUnitTestProject
 {
@@ -15,23 +16,39 @@ namespace XUnitTestProject
         public static string TestDirPath = $"{Directory.GetCurrentDirectory()}//TESTS";
         public static AppSettings AppSettings = Loader.LoadAppSettings();
 
-        public static List<DataSample> LoadExampleFiles(Action<string> output = null)
+        [Fact]
+        public static void SummarizeCSV()
         {
-            var json = Loader.LoadJson<Dictionary<string, string>>(Loader.LoadFileFromAppDirectory(AppSettings.SolvedDictFileName));
-            return Loader.SearchDirectoryForJobsFiles(AppSettings.ExamplesPath, output).Select(x =>
+            var path = $"{TestDirPath}//SUMMARIZED.csv";
+            int testCount = 20;
+
+            foreach (var file in Directory.GetFiles(TestDirPath, "*.csv")
+                .Where(x => char.IsDigit(x.Split("\\", StringSplitOptions.RemoveEmptyEntries).Last().First())))
             {
-                var dataSample = new DataSample() { FileName = Path.GetFileNameWithoutExtension(x), Data = Loader.LoadJobsFromFile(x) };
-                try
+
+
+                List<Result> records = new List<Result>();
+                int jobsCount = int.Parse(file.Split("\\", StringSplitOptions.RemoveEmptyEntries).Last().Split("_").First());
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true };
+                using (var reader = new StreamReader(file))
                 {
-                    dataSample.Best = int.Parse(json[dataSample.FileName] ?? null);
-                }
-                catch
-                {
-                    dataSample.Best = null;
+                    using var csv = new CsvReader(reader, config);
+                    records = csv.GetRecords<Result>().ToList();
                 }
 
-                return dataSample;
-            }).ToList();
+                config = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = !File.Exists(path) };
+                using (var writer = new StreamWriter(path, true))
+                {
+                    using var csv = new CsvWriter(writer, config);
+                    foreach (var group in records.GroupBy(x => x.Method).OrderBy(x => x.Key))
+                    {
+                        var meanTime = group.Sum(x => TimeSpan.Parse(x.ExecElapsed).Ticks) / testCount;
+                        var scoreDeviation = group.Sum(x => decimal.Parse(x.PercentScoreToBestScore)) / testCount;
+                        csv.WriteRecord(new { JobsCount = jobsCount, Method = group.Key, MeanTime = meanTime, ScoreDeviation = scoreDeviation });
+                        csv.NextRecord();
+                    }
+                }  
+            }
         }
 
         public static void WriteResultsToCsv(string methodName, int size, int bestFoundScore, List<Result> results)

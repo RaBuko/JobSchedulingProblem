@@ -13,8 +13,8 @@ namespace XUnitTestProject
             TestMethod(new GeneticAlgorithmMethod(), new GeneticAlgorithmOptions()
             {
                 Data = data,
-                PopulationSize = 100,
-                CrossoverRate = 0.2,
+                PopulationSize = 60,
+                CrossoverRate = 0.2f,
                 MutationRate = 0.8,
                 IterationCount = 1000,
                 SelectionMechanism = Solver.Utils.SelectionMechanismEnum.RouletteWheel,
@@ -35,8 +35,8 @@ namespace XUnitTestProject
                Data = data,
                IterationCount = 1000,
                MutationChance = 0.8f,
-               PopulationSize = 100,
-               CrossoverRate = 0.5f,
+               PopulationSize = 60,
+               CrossoverRate = 0.2f,
            });
     }
 }

@@ -31,9 +31,9 @@ namespace XUnitTestProject
                 data = Generator.GenerateJobs(new GeneratorOptions()
                 {
                     JobsCount = jobsCount,
-                    MaxTerm = jobsCount * 2,
                     MaxTime = jobsCount * 2,
                     MaxWeight = jobsCount * 2,
+                    MaxTerm = jobsCount * 2,
                 });
                 Loader.WriteJobsToFile(file, data);
             }
@@ -56,11 +56,12 @@ namespace XUnitTestProject
                 var stopwatch = new Stopwatch();
                 var (jobOrder, minTardiness) = method.Solve(options, stopwatch);
                 stopwatch.Stop();
+                
                 var result = new Result()
                 {
                     Score = minTardiness,
                     ExecElapsed = stopwatch.Elapsed.ToString("G"),
-                    Parameters = GetParameters(options)
+                    Parameters = GetParameters(options),
                 };
                 if (i != 0) results.Add(result);
                 Helper.LogStatus($"{method.GetType().Name} {i}/{testsToMake} | ExecElapsed = {result.ExecElapsed}");

@@ -4,9 +4,9 @@ using Xunit.Abstractions;
 
 namespace XUnitTestProject
 {
-    public class Test004 : BaseTest
+    public class Test007 : BaseTest
     {
-        public Test004(ITestOutputHelper outputHelper) : base(outputHelper, 4, 20) { }
+        public Test007(ITestOutputHelper outputHelper) : base(outputHelper, 7, 20) { }
 
         [Fact]
         public void BruteForceTest() =>
